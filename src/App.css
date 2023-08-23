@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: Texto;
+  src: url("./src/assets/fonts/Libre-Franklin.ttf") format("truetype");
+}
+@font-face {
+  font-family: Titulo;
+  src: url("./src/assets/fonts/Made-Bon-Boyage.otf") format("truetype");
+}
+* {
+  font-family: Texto;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: Titulo;
+}
