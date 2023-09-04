@@ -8,14 +8,14 @@ const Tacuifi2 = () => {
       <h2 className="text-5xl">Tacuifí II</h2>
 
       <div className="flex justify-around py-20">
-        <Link to="duplex">
+        <Link to="/unit/duplex">
           <UnitCard
             img="http://resource.ferozo.net/tacuifi/duplex/1.jpg"
             title="Dúplex"
             subtitle="Hasta 2 personas"
           />
         </Link>
-        <Link to="cabana-colonial">
+        <Link to="/unit/cabana-colonial">
           <UnitCard
             img="http://resource.ferozo.net/tacuifi/cabanas-coloniales/1.jpg"
             title="Cabaña colonial"

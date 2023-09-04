@@ -9,12 +9,12 @@ const Navbar = () => {
   const [fixed, setFixed] = useState("");
 
   useEffect(() => {
-    location === "/" || location === "/home" ? setFixed("fixed") : setFixed("");
+    location === "/" || location === "/inicio" ? setFixed("fixed") : setFixed("");
   });
 
   const navItems = [
     {
-      destination: "home",
+      destination: "inicio",
       text: "Inicio",
     },
     {
@@ -30,7 +30,7 @@ const Navbar = () => {
       text: "Promociones",
     },
     {
-      destination: "contact",
+      destination: "contacto",
       text: "Contacto",
     },
   ];
@@ -40,8 +40,8 @@ const Navbar = () => {
       className={`flex justify-around bg-black/70 p-3 w-full top-0 z-50 ${fixed}`}
     >
       <div className="brand">
-        <NavLink to="home">
-          <img src="./src/assets/images/logo.png" width={60} alt="" />
+        <NavLink to="inicio">
+          <img src="/src/assets/images/logo.png" width={60} alt="" />
         </NavLink>
       </div>
       <ul className="flex p-3 list-none">

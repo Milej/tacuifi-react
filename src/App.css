@@ -4,11 +4,11 @@
 
 @font-face {
   font-family: Texto;
-  src: url("./src/assets/fonts/Libre-Franklin.ttf") format("truetype");
+  src: url("/src/assets/fonts/Libre-Franklin.ttf") format("truetype");
 }
 @font-face {
   font-family: Titulo;
-  src: url("./src/assets/fonts/Made-Bon-Boyage.otf") format("truetype");
+  src: url("/src/assets/fonts/Made-Bon-Boyage.otf") format("truetype");
 }
 * {
   font-family: Texto;

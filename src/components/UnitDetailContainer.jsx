@@ -1,30 +1,25 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import UnitDetail from "../components/UnitDetail";
-import { useParams } from "react-router-dom";
 
 const UnitDetailContainer = () => {
-  const { unitId } = useParams();
 
   const getData = async () => {
-    const response = await fetch("./../data.json");
+    const response = await fetch("/src/data.json");
     const data = await response.json();
     return data;
   };
   
-  const [unit, setUnit] = useState([]);
+  const [units, setUnits] = useState([]);
 
   useEffect(() => {
-    getData().then((unit) => setUnit(unit), []);
-  });
+    getData()
+    .then(datos => {
+      setUnits(datos)
+    })
+  }, []);
 
   return (
-    <UnitDetail
-    // title={unit}
-    // subtitle={subtitle}
-    // info={info}
-    // equipment={equipment}
-    // img={imgApartamentos}
-    />
+    <UnitDetail units={units}/>
   );
 };
 

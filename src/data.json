@@ -3,14 +3,32 @@
     "id": "apartamento",
     "title": "Apartamento",
     "subtitle": "Hasta 2 personas",
-    "info": "Habitaciones de 25m² construidas en una planta. Cuentan con sommier doble, baño privado, pequeña galería, cochera cubierta con media sombra y asador con parrilla.",
+    "info": "Habitación de 25m² construida en una planta. Cuenta con sommier doble, baño privado, pequeña galería, cochera cubierta con media sombra y asador con parrilla.",
     "equipment": [
-      "Vajilla",
-      "Smart TV 50\"",
-      "Heladera bajo mesada",
-      "Microondas",
-      "Pava eléctrica",
-      "Tender"
+      {
+        "name": "Smart TV 50\"",
+        "icon": "LiveTv"
+      },
+      {
+        "name": "Vajilla",
+        "icon": "Coffee"
+      },
+      {
+        "name": "Heladera bajo mesada",
+        "icon": "Kitchen"
+      },
+      {
+        "name": "Microondas",
+        "icon": "Microwave"
+      },
+      {
+        "name": "Pava eléctrica",
+        "icon": "Blender"
+      },
+      {
+        "name": "Tender",
+        "icon": "DryCleaning"
+      }
     ],
     "folder": "apartamentos",
     "images": [
@@ -33,10 +51,22 @@
     "subtitle": "Hasta 4 personas",
     "info": "Cabañas de 50m² construídas en una planta. Cuentan con dos dormitorios (1° dormitorio sommier doble - 2° dormitorio dos sommiers simples), baño, cocina-comedor, galería-cochera y asador con parrilla individual.",
     "equipment": [
-      "Vajilla completa",
-      "Smart TV 32\"",
-      "Heladera bajo mesada",
-      "Tender"
+      {
+        "name": "Smart TV 32\"",
+        "icon": "LiveTv"
+      },
+      {
+        "name": "Vajilla completa",
+        "icon": "Coffee"
+      },
+      {
+        "name": "Heladera con congelador",
+        "icon": "Kitchen"
+      },
+      {
+        "name": "Tender",
+        "icon": "DryCleaning"
+      }
     ],
     "folder": "cabanas-piedra",
     "images": [
@@ -66,11 +96,30 @@
     "subtitle": "Hasta 2 personas",
     "info": "Dúplex de 35m² construídos en dos plantas. Cuentan con un dormitorio en la planta alta, con sommier doble, y en la planta baja cuentan con baño y cocina-comedor. También tienen una pequeña galería y cochera cubierta con media sombra. Contamos con dos unidades con aire acondicionado y dos con ventilador.",
     "equipment": [
-      "Vajilla completa",
-      "Smart TV 32\"",
-      "Heladera bajo mesada",
-      "Tender",
-      "Aire acondicionado"
+      {
+        "name": "Smart TV 32\"",
+        "icon": "LiveTv"
+      },
+      {
+        "name": "Vajilla completa",
+        "icon": "Coffee"
+      },
+      {
+        "name": "Heladera bajo mesada",
+        "icon": "Kitchen"
+      },
+      {
+        "name": "Aire acondicionado",
+        "icon": "AcUnit"
+      },
+      {
+        "name": "Pava eléctrica",
+        "icon": "Blender"
+      },
+      {
+        "name": "Tender",
+        "icon": "DryCleaning"
+      }
     ],
     "folder": "duplex",
     "images": [
@@ -102,10 +151,22 @@
     "subtitle": "Hasta 5 personas",
     "info": "Cabañas de 95m² construídas en dos plantas. Cuentan con dos dormitorios (1º dormitorio en planta baja con sommier doble) - (2º dormitorio en planta alta con 3 sommier simples), baño, cocina, comedor, terraza, galería-cochera y asador-parrilla individual.",
     "equipment": [
-      "Vajilla completa",
-      "Smart TV 32\"",
-      "Heladera bajo mesada",
-      "Tender"
+      {
+        "name": "Smart TV 32\"",
+        "icon": "LiveTv"
+      },
+      {
+        "name": "Vajilla completa",
+        "icon": "Coffee"
+      },
+      {
+        "name": "Heladera",
+        "icon": "Kitchen"
+      },
+      {
+        "name": "Tender",
+        "icon": "DryCleaning"
+      }
     ],
     "folder": "cabanas-coloniales",
     "images": [

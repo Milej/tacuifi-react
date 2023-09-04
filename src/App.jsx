@@ -9,6 +9,7 @@ import Tacuifi from "./pages/Tacuifi";
 import Tacuifi2 from "./pages/Tacuifi2";
 import Contact from "./components/Contact"
 import UnitDetailContainer from "./components/UnitDetailContainer"
+import Promotions from "./components/Promotions";
 
 const App = () => {
 
@@ -18,13 +19,12 @@ const App = () => {
         <Navbar />
         <Routes>
           <Route exact path="/" element={<Home />} />
-          <Route exact path="home" element={<Home />} />
+          <Route exact path="inicio" element={<Home />} />
           <Route exact path="tacuifi" element={<Tacuifi />} />
-          <Route exact path="tacuifi/:unit" element={<UnitDetailContainer />} />
+          <Route exact path="unit/:id" element={<UnitDetailContainer />} />
           <Route exact path="tacuifi2" element={<Tacuifi2 />} />
-          <Route exact path="tacuifi2/:unitId" element={<UnitDetailContainer />} />
-          <Route exact path="promotion" element="Promociones" />
-          <Route exact path="contact" element={<Contact />} />
+          <Route exact path="promociones" element={<Promotions />} />
+          <Route exact path="contacto" element={<Contact />} />
         </Routes>
         <FloatingWhatsApp
           phoneNumber="+5493546402842"

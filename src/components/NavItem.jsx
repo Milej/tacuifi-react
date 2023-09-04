@@ -5,8 +5,7 @@ const NavItem = ({ destination, text }) => {
   return (
     <li className="mx-3">
       <NavLink
-        className={({isActive}) =>
-          "text-white text-lg hover:border-b-2 " +
+        className={({isActive}) => "text-white text-lg hover:border-b hover:border-white " +
           (isActive ? "border-b-2 border-white" : "")
         }
         to={`/${destination}`}

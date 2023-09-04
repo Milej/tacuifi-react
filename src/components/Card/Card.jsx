@@ -7,7 +7,7 @@ import Button from "../Button";
 
 const Card = ({ title, text, location, folder, images }) => {
   return (
-    <div className="flex card m-10">
+    <div className="flex card m-10 rounded-lg ring-1 ring-zinc-200 hover:ring-2 hover:ring-zinc-700">
       <div className="p-10 text-center space-y-8">
         <NavLink to={`/${folder}`}>
           <h2 className="text-5xl col-span-3">{title}</h2>
