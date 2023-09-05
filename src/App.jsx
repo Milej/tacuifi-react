@@ -29,7 +29,7 @@ const App = () => {
         <FloatingWhatsApp
           phoneNumber="+5493546402842"
           accountName="Cabañas Tacuifí"
-          avatar="./src/assets/images/logo.png"
+          avatar="/logo.png"
           statusMessage="⏰ 9AM - 23PM"
           chatMessage="Hola 😊! ¿En que podemos ayudarle?"
           placeholder="Escribe un mensaje"
