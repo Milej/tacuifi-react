@@ -23,31 +23,33 @@ const Contact = () => {
     message: ""
   }
 
-  const send = async (data) => {
+  const send = (data) => {
 
     setLoading(true)
 
-    axios.post("http://149.50.132.30/mail", data)
+    axios.post("https://api.tacuifi.com.ar/mail", data)
       .then(response => {
-        try {
+
+        if (response.data.accepted) {
+          setResetForm(true)
+
           Swal.fire({
             title: 'Gracias',
-            text: 'Hemos enviado tu consulta. Pronto te estaremos respondiendo.',
+            text: 'Pronto te estaremos respondiendo.',
             icon: 'success',
-            confirmButtonText: 'Entendido'
+            confirmButtonText: 'Aceptar'
           })
-          setResetForm(true)
-        } catch (error) {
+        } else {
+          console.error("Error: " + response.data)
           Swal.fire({
             title: 'Error',
-            text: 'Ha ocurrido un error. Lo solucionaremos lo antes posible',
+            text: 'Ha ocurrido un error al enviar mensaje. Lo solucionaremos lo antes posible',
             icon: 'error',
-            confirmButtonText: 'Entendido'
+            confirmButtonText: 'Aceptar'
           })
-          console.error("Error: " + error)
-        } finally {
-          setLoading(false)
         }
+
+        setLoading(false)
       })
 
   }
@@ -58,13 +60,13 @@ const Contact = () => {
 
   return (
     <div className='container mx-auto p-10'>
-      <h1 className='text-5xl text-center'>Contacto</h1>
+      <h1 className='text-4xl text-center'>Contacto</h1>
 
-      <form className='grid grid-cols-3 p-10 my-10 gap-10 bg-white rounded-lg' onSubmit={handleSubmit(send)}>
+      <form className='grid grid-cols-1 xl:grid-cols-3 p-10 my-10 gap-10 bg-white rounded-lg' onSubmit={handleSubmit(send)}>
 
-        <div className='grid grid-cols-4 gap-4 col-span-1'>
+        <div className='grid grid-cols-12 col-span-1 gap-4'>
 
-          <div className='col-span-2'>
+          <div className='col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-6'>
             <label htmlFor="name" className='block text-gray-700 text-md w-full'>Nombre</label>
             <input
               type="text"
@@ -85,7 +87,7 @@ const Contact = () => {
             }
           </div>
 
-          <div className='col-span-2'>
+          <div className='col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-6'>
             <label htmlFor="phone" className='block text-gray-700 text-md w-full'>Teléfono</label>
             <input
               type="text"
@@ -105,7 +107,7 @@ const Contact = () => {
               )
             }
           </div>
-          <div className='col-span-4'>
+          <div className='col-span-12 lg:col-span-4 xl:col-span-12'>
             <label htmlFor="email" className='block text-gray-700 text-md w-full'>Correo electrónico</label>
             <input
               type="text"
@@ -129,7 +131,7 @@ const Contact = () => {
               )
             }
           </div>
-          <div className='col-span-2'>
+          <div className='col-span-12 md:col-span-3'>
             <label htmlFor="paxAdult" className='block text-gray-700 text-md w-full'>Adultos</label>
             <input
               type="number"
@@ -150,7 +152,7 @@ const Contact = () => {
             }
           </div>
 
-          <div className='col-span-2'>
+          <div className='col-span-12 md:col-span-3'>
             <label htmlFor="paxChildren" className='block text-gray-700 text-md w-full'>Menores</label>
             <input type="number" className={`w-full border rounded border-gray-300 focus:ring-gray-700 focus:border-gray-700`}
               {...register("paxChildren", {
@@ -162,8 +164,8 @@ const Contact = () => {
               )
             }
           </div>
-          <div className='col-span-2'>
-            <label htmlFor="paxBaby" className='block text-gray-700 text-md w-full'>Menores de 3</label>
+          <div className='col-span-12 md:col-span-3'>
+            <label htmlFor="paxBaby" className='block text-gray-700 text-md w-full'>Men. de 3</label>
             <input type="number" className={`w-full border rounded border-gray-300 focus:ring-gray-700 focus:border-gray-700`}
               {...register("paxBaby", {
                 required: { value: false }
@@ -175,7 +177,7 @@ const Contact = () => {
             }
           </div>
 
-          <div className='col-span-2'>
+          <div className='col-span-12 md:col-span-3'>
             <label htmlFor="paxPet" className='block text-gray-700 text-md w-full'>Mascotas</label>
             <input type="number" className={`w-full border rounded border-gray-300  
               ${errors.paxPet
@@ -191,7 +193,7 @@ const Contact = () => {
             }
           </div>
 
-          <div className='col-span-2'>
+          <div className='col-span-12 md:col-span-6'>
             <label htmlFor="checkin" className='block text-gray-700 text-md w-full'>Check In</label>
             <input type="date" className={`w-full border rounded border-gray-300  
               ${errors.checkin
@@ -209,7 +211,7 @@ const Contact = () => {
               )
             }
           </div>
-          <div className='col-span-2'>
+          <div className='col-span-12 md:col-span-6'>
             <label htmlFor="checkout" className='block text-gray-700 text-md w-full'>Check Out</label>
             <input type="date" className={`w-full border rounded border-gray-300  
               ${errors.checkout
@@ -228,7 +230,7 @@ const Contact = () => {
             }
           </div>
 
-          <div className="col-span-4">
+          <div className="col-span-12">
             <label htmlFor="message" className='block text-gray-700 text-md w-full'>Consulta</label>
             <textarea rows="4" className={`w-full border rounded border-gray-300  
               ${errors.message
@@ -248,16 +250,16 @@ const Contact = () => {
               )
             }
           </div>
-          {/* <button
+          <button
             type='submit'
-            className='w-full bg-green-500 text-white px-5 py-3 focus:border-none hover:bg-green-600 col-span-4 cursor-pointer disabled:bg-gray-400 disabled:cursor-wait'
+            className='w-full bg-green-500 text-white px-5 py-3 focus:border-none hover:bg-green-600 col-span-12 cursor-pointer disabled:bg-gray-400 disabled:cursor-wait'
             disabled={loading ? true : false}
           >
             {!loading ? "Enviar" : "Enviando consulta..."}
-          </button> */}
-          <p className="col-span-4 text-sm text-amber-500 text-center">Función no disponible por el momento. Tienes el botón de WhatsApp para enviarnos un mensaje.</p>
+          </button>
+          {/* <p className="col-span-4 text-sm text-amber-500 text-center">Función no disponible por el momento. Tienes el botón de WhatsApp para enviarnos un mensaje.</p> */}
         </div>
-        <div className='col-span-2'>
+        <div className='hidden xl:block xl:col-span-2'>
           <img src="/tacuifi2/7.jpg" alt="" className='rounded-lg' />
         </div>
 

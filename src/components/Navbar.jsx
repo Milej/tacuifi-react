@@ -12,7 +12,7 @@ const Navbar = () => {
 
   useEffect(() => {
     location === "/" || location === "/inicio" ? setFixed("fixed") : setFixed("");
-  });
+  }, []);
 
   const navItems = [
     {
@@ -51,6 +51,7 @@ const Navbar = () => {
               key={item.destination}
               destination={item.destination}
               text={item.text}
+              setOpen={setOpen}
             />
           ))}
         </ul>

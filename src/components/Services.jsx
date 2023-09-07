@@ -3,8 +3,8 @@ import { Wifi, CleaningServices, BakeryDining, ConnectedTv, Bed, LocalParking, H
 const Services = () => {
   return (
     <>
-      <h2 className="text-2xl font-semibold pt-4 text-center">Servicios</h2>
-      <ul className="grid grid-cols-2">
+      <h2 className="text-2xl lg:text-lg xl:text-2xl font-semibold text-center">Servicios</h2>
+      <ul className="grid grid-cols-2 md:grid-cols-3 text-center">
         <li className="flex flex-col items-center text-lg py-1">
           <span className=""><Wifi /></span>
           Wi fi

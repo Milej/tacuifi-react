@@ -1,7 +1,7 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 
-const NavItem = ({ destination, text }) => {
+const NavItem = ({ destination, text, setOpen }) => {
   return (
     <li className="mx-3">
       <NavLink
@@ -9,6 +9,7 @@ const NavItem = ({ destination, text }) => {
           (isActive ? "border-b-2 border-white" : "")
         }
         to={`/${destination}`}
+        onClick={() => setOpen(false)}
       >
         {text}
       </NavLink>

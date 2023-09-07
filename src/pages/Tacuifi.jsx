@@ -4,10 +4,11 @@ import { Link } from "react-router-dom";
 
 const Tacuifi = () => {
   return (
-    <div className="container mx-auto py-10 text-center">
-      <h2 className="text-5xl">Tacuifí I</h2>
+    <div className="container mx-auto py-5 md:py-8 text-center">
 
-      <div className="flex justify-around py-20">
+      <h2 className="text-4xl md:text-5xl">Tacuifí I</h2>
+
+      <div className="flex flex-col lg:flex-row space-y-4 lg:space-y-0 justify-around py-4">
         <Link to="/unit/apartamento">
           <UnitCard
             img="/apartamentos/1.jpeg"
