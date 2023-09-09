@@ -41,7 +41,7 @@ const UnitDetail = ({ units }) => {
   }
 
   return loading ? <Loader /> : (
-    <div className="container grid space-y-4 mx-auto px-4 py-8">
+    <div className="container grid space-y-4 mx-auto px-4 py-32">
       <h1 className="text-4xl">{unit.title} | <span className="text-base">{unit.subtitle}</span></h1>
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
 

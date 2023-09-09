@@ -3,7 +3,7 @@ import "./Intro.css";
 
 const Intro = () => {
   return (
-    <div className="intro bg-no-repeat bg-cover min-h-screen">
+    <div className="intro bg-no-repeat bg-cover min-h-screen py-10">
       <div className="bg-black/30 min-h-screen">
         <h1 className="text-5xl md:text-5xl lg:text-7xl py-20 md:py-32 lg:py-40 text-center text-white font-semibold w-full">
           Cabañas Tacuifí

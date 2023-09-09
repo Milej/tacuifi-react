@@ -59,7 +59,7 @@ const Contact = () => {
   }, [resetForm])
 
   return (
-    <div className='container mx-auto p-10'>
+    <div className='container mx-auto px-10 py-32'>
       <h1 className='text-4xl text-center'>Contacto</h1>
 
       <form className='grid grid-cols-1 xl:grid-cols-3 p-10 my-10 gap-10 bg-white rounded-lg' onSubmit={handleSubmit(send)}>

@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 const Tacuifi2 = () => {
   return (
-    <div className="container mx-auto py-5 md:py-8 text-center">
+    <div className="container mx-auto py-32 text-center">
       
       <h2 className="text-4xl md:text-5xl">Tacuifí II</h2>
 

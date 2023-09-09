@@ -7,12 +7,7 @@ import { Menu, Close } from "@mui/icons-material";
 const Navbar = () => {
   const location = useLocation().pathname;
 
-  const [fixed, setFixed] = useState("");
   const [open, setOpen] = useState(false)
-
-  useEffect(() => {
-    location === "/" || location === "/inicio" ? setFixed("fixed") : setFixed("");
-  }, []);
 
   const navItems = [
     {
@@ -38,7 +33,7 @@ const Navbar = () => {
   ];
 
   return (
-    <nav className={`w-full md:px-10  ${open ? "h-fit bg-black" : "h-20 bg-black/70"} z-50 ${fixed}`}>
+    <nav className={`w-full md:px-10  ${open ? "h-fit bg-black" : "h-20 bg-black/70"} z-50 fixed`}>
       <div className="flex justify-between md:justify-around items-center">
         <div className={`p-3 ${open && "hidden"} md:block`}>
           <NavLink to="inicio">
