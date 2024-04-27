@@ -15,11 +15,11 @@ const Navbar = () => {
       text: "Inicio",
     },
     {
-      destination: "tacuifi",
+      destination: "complejo-tacuifi",
       text: "Tacuifí I",
     },
     {
-      destination: "tacuifi2",
+      destination: "complejo-tacuifi2",
       text: "Tacuifí II",
     },
     {
