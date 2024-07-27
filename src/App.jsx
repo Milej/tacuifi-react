@@ -6,12 +6,11 @@ import { FloatingWhatsApp } from "react-floating-whatsapp";
 import Home from "./pages/Home";
 import Tacuifi from "./pages/Tacuifi";
 import Tacuifi2 from "./pages/Tacuifi2";
-import Contact from "./components/Contact"
-import UnitDetailContainer from "./components/UnitDetailContainer"
+import Contact from "./components/Contact";
+import UnitDetailContainer from "./components/UnitDetailContainer";
 import Promotions from "./components/Promotions";
 
 const App = () => {
-
   return (
     <div style={{ backgroundColor: "#f5f5f5" }}>
       <BrowserRouter>

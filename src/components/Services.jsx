@@ -10,12 +10,8 @@ const Services = () => {
           Wi fi
         </li>
         <li className="flex flex-col items-center text-lg py-1">
-          <span className=""><BakeryDining /></span>
-          Desayuno
-        </li>
-        <li className="flex flex-col items-center text-lg py-1">
           <span className=""><CleaningServices /></span>
-          Limpieza diaria
+          Limpieza diaria incluida (opcional)
         </li>
         <li className="flex flex-col items-center text-lg py-1">
           <span className=""><Bed /></span>
