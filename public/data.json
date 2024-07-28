@@ -1,0 +1,192 @@
+[
+  {
+    "id": "apartamento",
+    "title": "Apartamento",
+    "subtitle": "Hasta 2 personas",
+    "info": "Habitación de 25m² construida en una planta. Cuenta con sommier doble, baño privado, pequeña galería, cochera cubierta con media sombra y asador con parrilla.",
+    "equipment": [
+      {
+        "name": "Smart TV 50\"",
+        "icon": "LiveTv"
+      },
+      {
+        "name": "Vajilla",
+        "icon": "Coffee"
+      },
+      {
+        "name": "Heladera bajo mesada",
+        "icon": "Kitchen"
+      },
+      {
+        "name": "Microondas",
+        "icon": "Microwave"
+      },
+      {
+        "name": "Pava eléctrica",
+        "icon": "Blender"
+      },
+      {
+        "name": "Tender",
+        "icon": "DryCleaning"
+      }
+    ],
+    "folder": "apartamentos",
+    "images": [
+      "1.jpeg",
+      "2.jpeg",
+      "3.jpeg",
+      "4.jpeg",
+      "5.jpeg",
+      "6.jpeg",
+      "7.jpeg",
+      "8.jpeg",
+      "9.jpeg",
+      "10.jpeg",
+      "11.jpeg"
+    ]
+  },
+  {
+    "id": "cabana-piedra",
+    "title": "Cabaña de piedra",
+    "subtitle": "Hasta 4 personas",
+    "info": "Cabaña de 50m² construída en una planta. Cuenta con dos dormitorios (1° dormitorio sommier doble - 2° dormitorio dos sommiers simples), baño, cocina-comedor, galería-cochera y asador con parrilla individual.",
+    "equipment": [
+      {
+        "name": "Smart TV 32\"",
+        "icon": "LiveTv"
+      },
+      {
+        "name": "Vajilla completa",
+        "icon": "Coffee"
+      },
+      {
+        "name": "Heladera con congelador",
+        "icon": "Kitchen"
+      },
+      {
+        "name": "Tender",
+        "icon": "DryCleaning"
+      }
+    ],
+    "folder": "cabanas-piedra",
+    "images": [
+      "1.jpg",
+      "2.jpg",
+      "3.jpg",
+      "4.jpg",
+      "5.jpg",
+      "6.jpg",
+      "7.jpg",
+      "8.jpg",
+      "9.jpg",
+      "10.jpg",
+      "11.jpg",
+      "12.jpg",
+      "13.jpg",
+      "14.jpg",
+      "15.jpg",
+      "16.jpg",
+      "17.jpg",
+      "18.jpg"
+    ]
+  },
+  {
+    "id": "duplex",
+    "title": "Dúplex",
+    "subtitle": "Hasta 2 personas",
+    "info": "Dúplex de 35m² construído en dos plantas. Cuenta con un dormitorio en la planta alta, con sommier doble, y en la planta baja cuenta con baño y cocina-comedor. También tiene una pequeña galería y cochera cubierta con media sombra.",
+    "equipment": [
+      {
+        "name": "Smart TV 32\"",
+        "icon": "LiveTv"
+      },
+      {
+        "name": "Vajilla completa",
+        "icon": "Coffee"
+      },
+      {
+        "name": "Heladera bajo mesada",
+        "icon": "Kitchen"
+      },
+      {
+        "name": "Aire acondicionado",
+        "icon": "AcUnit"
+      },
+      {
+        "name": "Pava eléctrica",
+        "icon": "Blender"
+      },
+      {
+        "name": "Tender",
+        "icon": "DryCleaning"
+      }
+    ],
+    "folder": "duplex",
+    "images": [
+      "1.jpg",
+      "2.jpg",
+      "3.jpg",
+      "4.jpg",
+      "5.jpg",
+      "6.jpg",
+      "7.jpg",
+      "8.jpg",
+      "9.jpg",
+      "10.jpg",
+      "11.jpg",
+      "12.jpg",
+      "13.jpg",
+      "14.jpg",
+      "15.jpg",
+      "16.jpg",
+      "17.jpg",
+      "18.jpg",
+      "19.jpg",
+      "20.jpg"
+    ]
+  },
+  {
+    "id": "cabana-colonial",
+    "title": "Cabaña Colonial",
+    "subtitle": "Hasta 5 personas",
+    "info": "Cabaña de 95m² construída en dos plantas. Cuenta con dos dormitorios (1º dormitorio en planta baja con sommier doble) - (2º dormitorio en planta alta con 3 sommier simples), baño, cocina, comedor, terraza, galería-cochera y asador-parrilla individual.",
+    "equipment": [
+      {
+        "name": "Smart TV 32\"",
+        "icon": "LiveTv"
+      },
+      {
+        "name": "Vajilla completa",
+        "icon": "Coffee"
+      },
+      {
+        "name": "Heladera",
+        "icon": "Kitchen"
+      },
+      {
+        "name": "Tender",
+        "icon": "DryCleaning"
+      }
+    ],
+    "folder": "cabanas-coloniales",
+    "images": [
+      "1.jpg",
+      "2.jpg",
+      "3.jpg",
+      "4.jpg",
+      "5.jpg",
+      "6.jpg",
+      "7.jpg",
+      "8.jpg",
+      "9.jpg",
+      "10.jpg",
+      "11.jpg",
+      "12.jpg",
+      "13.jpg",
+      "14.jpg",
+      "15.jpg",
+      "16.jpg",
+      "17.jpg"
+    ]
+  }
+]
