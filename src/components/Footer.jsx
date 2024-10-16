@@ -1,6 +1,7 @@
 import React from "react";
 import PhoneIcon from "@mui/icons-material/Phone";
 import PlaceIcon from "@mui/icons-material/Place";
+import { añoActual } from "../helpers/fechas";
 
 const Footer = () => {
   return (
@@ -23,13 +24,16 @@ const Footer = () => {
           </span>
         </div>
         <p className="text-base uppercase tracking-widest text-center py-6">
-          Cabañas Tacuifí - Todos los derechos reservados - 2023
+          Cabañas Tacuifí - Todos los derechos reservados - {añoActual()}
         </p>
       </div>
       <div className="bg-gray-950 py-2 text-white">
         <p className="text-center">
           Desarrollado por
-          <a href="https://www.instagram.com/maxmenvielle17" target="_blank" className="font-semibold tracking-tighter"> Max Menvielle</a>
+          <a href="https://www.instagram.com/maxmenvielle17" target="_blank" className="font-semibold tracking-tighter">
+            {" "}
+            Max Menvielle
+          </a>
         </p>
       </div>
     </>

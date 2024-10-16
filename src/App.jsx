@@ -6,9 +6,11 @@ import { FloatingWhatsApp } from "react-floating-whatsapp";
 import Home from "./pages/Home";
 import Tacuifi from "./pages/Tacuifi";
 import Tacuifi2 from "./pages/Tacuifi2";
-import Contact from "./components/Contact";
-import UnitDetailContainer from "./components/UnitDetailContainer";
-import Promotions from "./components/Promotions";
+import Promociones from "./pages/Promociones";
+import { CONTACTO, INICIO, PROMOCIONES, TACUIFI, TACUIFI_2, UNIDAD } from "./config/rutas";
+import Error404 from "./pages/Error404";
+import Unidad from "./pages/Unidad";
+import Contacto from "./pages/Contacto";
 
 const App = () => {
   return (
@@ -16,13 +18,13 @@ const App = () => {
       <BrowserRouter>
         <Navbar />
         <Routes>
-          <Route exact path="/" element={<Home />} />
-          <Route exact path="inicio" element={<Home />} />
-          <Route exact path="complejo-tacuifi" element={<Tacuifi />} />
-          <Route exact path="unit/:id" element={<UnitDetailContainer />} />
-          <Route exact path="complejo-tacuifi2" element={<Tacuifi2 />} />
-          <Route exact path="promociones" element={<Promotions />} />
-          <Route exact path="contacto" element={<Contact />} />
+          <Route exact path={INICIO} element={<Home />} />
+          <Route exact path={TACUIFI} element={<Tacuifi />} />
+          <Route exact path={TACUIFI_2} element={<Tacuifi2 />} />
+          <Route exact path={UNIDAD + "/:id"} element={<Unidad />} />
+          <Route exact path={PROMOCIONES} element={<Promociones />} />
+          <Route exact path={CONTACTO} element={<Contacto />} />
+          <Route exact path="*" element={<Error404 />} />
         </Routes>
         <FloatingWhatsApp
           phoneNumber="+5493546402842"

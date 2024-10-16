@@ -5,12 +5,12 @@ const NavItem = ({ destination, text, setOpen }) => {
   return (
     <li className="mx-3">
       <NavLink
-        className={({isActive}) => "text-white text-xl md:text-base hover:border-b hover:border-white uppercase " +
+        className={({ isActive }) =>
+          "text-white text-xl md:text-base hover:border-b hover:border-white uppercase " +
           (isActive ? "border-b-2 border-white" : "")
         }
-        to={`/${destination}`}
-        onClick={() => setOpen(false)}
-      >
+        to={destination}
+        onClick={() => setOpen(false)}>
         {text}
       </NavLink>
     </li>

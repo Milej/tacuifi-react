@@ -1,26 +1,11 @@
 import { useState, useEffect } from "react";
 import UnitDetail from "../components/UnitDetail";
+import { useParams } from "react-router-dom";
 
 const UnitDetailContainer = () => {
-
-  const getData = async () => {
-    const response = await fetch("/data.json");
-    const data = await response.json();
-    return data;
-  };
   
-  const [units, setUnits] = useState([]);
 
-  useEffect(() => {
-    getData()
-    .then(datos => {
-      setUnits(datos)
-    })
-  }, []);
-
-  return (
-    <UnitDetail units={units}/>
-  );
+  return <UnitDetail unidad={unidad} loading={loading} />;
 };
 
 export default UnitDetailContainer;

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import Swal from "sweetalert2";
 
-const Contact = () => {
+const Contacto = () => {
   const {
     register,
     formState: { errors },
@@ -59,7 +59,7 @@ const Contact = () => {
   }, [resetForm]);
 
   return (
-    <div className="container mx-auto px-10 py-32">
+    <div className="container mx-auto px-4 py-32">
       <h1 className="text-4xl text-center">Contacto</h1>
 
       <form
@@ -67,7 +67,7 @@ const Contact = () => {
         onSubmit={handleSubmit(send)}>
         <div className="grid grid-cols-12 col-span-1 gap-4">
           <div className="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-6">
-            <label htmlFor="name" className="block text-gray-700 text-md w-full">
+            <label htmlFor="name" className="block text-gray-700 text-base w-full">
               Nombre
             </label>
             <input
@@ -89,7 +89,7 @@ const Contact = () => {
           </div>
 
           <div className="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-6">
-            <label htmlFor="phone" className="block text-gray-700 text-md w-full">
+            <label htmlFor="phone" className="block text-gray-700 text-base w-full">
               Teléfono
             </label>
             <input
@@ -110,7 +110,7 @@ const Contact = () => {
             {errors.phone && <span className="text-red-600 text-sm">{errors.phone.message}</span>}
           </div>
           <div className="col-span-12 lg:col-span-4 xl:col-span-12">
-            <label htmlFor="email" className="block text-gray-700 text-md w-full">
+            <label htmlFor="email" className="block text-gray-700 text-base w-full">
               Correo electrónico
             </label>
             <input
@@ -134,8 +134,8 @@ const Contact = () => {
             />
             {errors.email && <span className="text-red-600 text-sm">{errors.email.message}</span>}
           </div>
-          <div className="col-span-12 md:col-span-3">
-            <label htmlFor="paxAdult" className="block text-gray-700 text-md w-full">
+          <div className="col-span-12 md:col-span-4">
+            <label htmlFor="paxAdult" className="block text-gray-700 text-base w-full">
               Adultos
             </label>
             <input
@@ -156,8 +156,8 @@ const Contact = () => {
             {errors.paxAdult && <span className="text-red-600 text-sm">{errors.paxAdult.message}</span>}
           </div>
 
-          <div className="col-span-12 md:col-span-3">
-            <label htmlFor="paxChildren" className="block text-gray-700 text-md w-full">
+          <div className="col-span-12 md:col-span-4">
+            <label htmlFor="paxChildren" className="block text-gray-700 text-base w-full">
               Menores
             </label>
             <input
@@ -169,9 +169,9 @@ const Contact = () => {
             />
             {errors.paxChildren && <span className="text-red-600 text-sm">{errors.paxChildren.message}</span>}
           </div>
-          <div className="col-span-12 md:col-span-3">
-            <label htmlFor="paxBaby" className="block text-gray-700 text-md w-full">
-              Men. de 3
+          <div className="col-span-12 md:col-span-4">
+            <label htmlFor="paxBaby" className="block text-gray-700 text-base w-full">
+              Bebés
             </label>
             <input
               type="number"
@@ -183,27 +183,8 @@ const Contact = () => {
             {errors.paxBaby && <span className="text-red-600 text-sm">{errors.paxBaby.message}</span>}
           </div>
 
-          <div className="col-span-12 md:col-span-3">
-            <label htmlFor="paxPet" className="block text-gray-700 text-md w-full">
-              Mascotas
-            </label>
-            <input
-              type="number"
-              className={`w-full border rounded border-gray-300  
-              ${
-                errors.paxPet
-                  ? "border-red-500 focus:ring-red-600 focus:border-red-600"
-                  : "focus:ring-gray-700 focus:border-gray-700"
-              } `}
-              {...register("paxPet", {
-                required: { value: false },
-              })}
-            />
-            {errors.paxPet && <span className="text-red-600 text-sm">{errors.paxPet.message}</span>}
-          </div>
-
           <div className="col-span-12 md:col-span-6">
-            <label htmlFor="checkin" className="block text-gray-700 text-md w-full">
+            <label htmlFor="checkin" className="block text-gray-700 text-base w-full">
               Check In
             </label>
             <input
@@ -224,7 +205,7 @@ const Contact = () => {
             {errors.checkin && <span className="text-red-600 text-sm">{errors.checkin.message}</span>}
           </div>
           <div className="col-span-12 md:col-span-6">
-            <label htmlFor="checkout" className="block text-gray-700 text-md w-full">
+            <label htmlFor="checkout" className="block text-gray-700 text-base w-full">
               Check Out
             </label>
             <input
@@ -246,7 +227,7 @@ const Contact = () => {
           </div>
 
           <div className="col-span-12">
-            <label htmlFor="message" className="block text-gray-700 text-md w-full">
+            <label htmlFor="message" className="block text-gray-700 text-base w-full">
               Consulta
             </label>
             <textarea
@@ -281,4 +262,4 @@ const Contact = () => {
   );
 };
 
-export default Contact;
+export default Contacto;
