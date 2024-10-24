@@ -69,31 +69,6 @@ const Promotions = () => {
             Consultar
           </button>
         </div>
-        <div className="grid col-span-1 shadow-lg rounded-lg p-10 space-y-5 text-center bg-white">
-          <h5 className="text-2xl">Cuotealo</h5>
-          <p className="text-base">3 y 6 cuotas fijas con tarjetas de crédito</p>
-          <span className="text-gray-400 text-xs"></span>
-          <button
-            type="button"
-            className="border border-zinc-700 px-5 py-2 rounded hover:bg-zinc-700 hover:text-white place-self-center"
-            onClick={handleClick}>
-            Consultar
-          </button>
-        </div>
-        {/* <div className='grid col-span-1 shadow-lg rounded-lg p-10 space-y-5 text-center bg-white'>
-          <h5 className='text-2xl'>Oktoberfest</h5>
-          <p className='text-base'>20% de descuento abonando el total por transferencia</p>
-          <p className='text-base'>3, 6 y 9 cuotas sin interés con tarjetas de credito</p>
-          <span className='text-gray-400 text-xs'>Válido hasta el 15 de Agosto</span>
-          <button type='button' className='border border-zinc-700 px-5 py-2 rounded hover:bg-zinc-700 hover:text-white place-self-center' onClick={handleClick}>Consultar</button>
-        </div>
-        <div className='grid col-span-1 shadow-lg rounded-lg p-10 space-y-5 text-center bg-white'>
-          <h5 className='text-2xl'>Oktoberfest</h5>
-          <p className='text-base'>10% de descuento abonando el total por transferencia</p>
-          <p className='text-base'>3 y 6 cuotas sin interés con tarjetas de credito</p>
-          <span className='text-gray-400 text-xs'>Válido hasta el 10 de Septiembre</span>
-          <button type='button' className='border border-zinc-700 px-5 py-2 rounded hover:bg-zinc-700 hover:text-white place-self-center' onClick={handleClick}>Consultar</button>
-        </div> */}
       </div>
     </div>
   );
