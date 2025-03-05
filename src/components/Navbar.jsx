@@ -18,10 +18,10 @@ const Navbar = () => {
       destination: TACUIFI,
       text: "Tacuifí I",
     },
-    {
-      destination: TACUIFI_2,
-      text: "Tacuifí II",
-    },
+    // {
+    //   destination: TACUIFI_2,
+    //   text: "Tacuifí II",
+    // },
     {
       destination: PROMOCIONES,
       text: "Promociones",

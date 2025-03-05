@@ -10,7 +10,7 @@ const Intro = () => {
         </h1>
         <div className="container mx-auto bg-black/30 px-10 md:py-5 sm:px-20 text-xl max-w-7xl rounded-lg">
           <p className="text-white font-semibold text-base lg:text-lg py-5">
-            Nuestros complejos se encuentran ubicados en la localidad de Los
+            Nuestro complejo se encuentra ubicado en la localidad de Los
             Reartes, en pleno Valle de Calamuchita, Córdoba.
           </p>
           <p className="text-white leading-loose text-base lg:text-lg py-5">

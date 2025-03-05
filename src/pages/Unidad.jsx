@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import UnitDetail from "../components/UnitDetail";
 import Loader from "../components/Loader";
+import Error404 from "./Error404";
 
 const Unidad = () => {
   const { id } = useParams();
@@ -17,6 +18,7 @@ const Unidad = () => {
       const unidadEncontrada = data.find(u => u.id == id);
       setUnidad(unidadEncontrada);
     } catch (error) {
+      console.log(error);
     } finally {
       setLoading(false);
     }
@@ -26,6 +28,6 @@ const Unidad = () => {
     setearUnidad();
   }, [id]);
 
-  return loading ? <Loader /> : <UnitDetail unidad={unidad} />;
+  return loading ? <Loader /> : unidad != undefined ? <UnitDetail unidad={unidad} /> : <Error404 />;
 };
 export default Unidad;

@@ -16,7 +16,7 @@ const Promotions = () => {
           <h5 className="text-2xl">Jubilados</h5>
           <p className="text-base">10% de descuento a jubilados</p>
           <span className="text-gray-400 text-xs">
-            Válido para temporada baja. No acumulable con otras promociones.
+            Válido para temporada baja. No acumulable con otras promociones. Abonando en efectivo o transferencia.
           </span>
           <button
             type="button"
@@ -25,7 +25,7 @@ const Promotions = () => {
             Consultar
           </button>
         </div>
-        <div className="grid col-span-1 shadow-lg rounded-lg p-10 space-y-5 text-center bg-white">
+        {/* <div className="grid col-span-1 shadow-lg rounded-lg p-10 space-y-5 text-center bg-white">
           <h5 className="text-2xl">Días de semana (Lunes a Jueves)</h5>
           <p className="text-base">10% de descuento</p>
           <span className="text-gray-400 text-xs">Válido para temporada baja</span>
@@ -68,7 +68,7 @@ const Promotions = () => {
             onClick={handleClick}>
             Consultar
           </button>
-        </div>
+        </div> */}
       </div>
     </div>
   );

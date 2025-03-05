@@ -20,7 +20,7 @@ const App = () => {
         <Routes>
           <Route exact path={INICIO} element={<Home />} />
           <Route exact path={TACUIFI} element={<Tacuifi />} />
-          <Route exact path={TACUIFI_2} element={<Tacuifi2 />} />
+          {/* <Route exact path={TACUIFI_2} element={<Tacuifi2 />} /> */}
           <Route exact path={UNIDAD + "/:id"} element={<Unidad />} />
           <Route exact path={PROMOCIONES} element={<Promociones />} />
           <Route exact path={CONTACTO} element={<Contacto />} />
