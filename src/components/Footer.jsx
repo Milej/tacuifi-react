@@ -7,7 +7,7 @@ const Footer = () => {
   return (
     <>
       <div className="bg-zinc-700 px-10 text-white">
-        <div className="flex flex-col lg:flex-row space-y-4 lg:space-y-0 lg:justify-between border-b py-8 border-gray-400">
+        <div className="flex flex-col lg:flex-row space-y-4 lg:space-y-0 lg:justify-around border-b py-8 border-gray-400">
           <span className="text-sm">
             <PhoneIcon />
             +54 9 3546 402842
@@ -18,10 +18,10 @@ const Footer = () => {
             Tacuifí I - Av. San Martín s/n
           </span>
 
-          <span className="text-sm">
+          {/* <span className="text-sm">
             <PlaceIcon />
             Tacuifí II - Av. Costanera Bartolomé Lema & 25 De Junio
-          </span>
+          </span> */}
         </div>
         <p className="text-base uppercase tracking-widest text-center py-6">
           Cabañas Tacuifí - Todos los derechos reservados - {añoActual()}
