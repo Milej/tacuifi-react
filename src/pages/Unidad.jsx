@@ -9,13 +9,12 @@ const Unidad = () => {
 
   const [unidad, setUnidad] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   const setearUnidad = async () => {
     try {
       const response = await fetch("/data.json");
       const data = await response.json();
-      const unidadEncontrada = data.find(u => u.id == id);
+      const unidadEncontrada = data.find((u) => u.id == id);
       setUnidad(unidadEncontrada);
     } catch (error) {
       console.log(error);

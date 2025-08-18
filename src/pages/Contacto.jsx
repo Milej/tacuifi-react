@@ -11,7 +11,6 @@ const Contacto = () => {
     reset,
   } = useForm();
   const [resetForm, setResetForm] = useState(false);
-
   const [loading, setLoading] = useState(false);
 
   const emptyForm = {
@@ -21,31 +20,27 @@ const Contacto = () => {
     paxAdult: "",
     paxChildren: "",
     paxBaby: "",
-    paxPet: "",
     checkin: "",
     checkout: "",
     message: "",
   };
 
-  const send = async data => {
+  const send = async (data) => {
     setLoading(true);
-
     try {
       await axios.post("https://api.tacuifi.com.ar/mail", data);
-
       Swal.fire({
-        title: "Gracias",
-        text: "Pronto te estaremos respondiendo.",
+        title: "¡Consulta enviada!",
+        text: "Gracias por contactarte, pronto te responderemos.",
         icon: "success",
         confirmButtonText: "Aceptar",
       });
-
       setResetForm(true);
     } catch (error) {
       console.error("Error: " + error);
       Swal.fire({
         title: "Error",
-        text: "Ha ocurrido un error al enviar mensaje. Lo solucionaremos lo antes posible",
+        text: "Hubo un problema al enviar el mensaje. Intenta nuevamente en unos minutos.",
         icon: "error",
         confirmButtonText: "Aceptar",
       });
@@ -59,206 +54,207 @@ const Contacto = () => {
   }, [resetForm]);
 
   return (
-    <div className="container mx-auto px-4 py-32">
-      <h1 className="text-4xl text-center">Contacto</h1>
+    <section className="container mx-auto px-4 sm:px-6 py-24 sm:py-32">
+      {/* Encabezado */}
+      <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-16">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-gray-800">
+          Contáctanos
+        </h1>
+        <p className="mt-3 sm:mt-4 text-base sm:text-lg text-gray-600">
+          Completá el formulario y nos pondremos en contacto enseguida.{" "}
+          <span className="text-green-600 font-semibold">
+            Tu descanso comienza aquí.
+          </span>
+        </p>
+      </div>
 
+      {/* Formulario */}
       <form
-        className="grid grid-cols-1 xl:grid-cols-3 p-10 my-10 gap-10 bg-white rounded-lg"
-        onSubmit={handleSubmit(send)}>
-        <div className="grid grid-cols-12 col-span-1 gap-4">
-          <div className="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-6">
-            <label htmlFor="name" className="block text-gray-700 text-base w-full">
+        className="grid grid-cols-1 xl:grid-cols-3 bg-white shadow-xl rounded-3xl overflow-hidden"
+        onSubmit={handleSubmit(send)}
+      >
+        {/* Formulario (izquierda) */}
+        <div className="col-span-2 p-6 sm:p-10 lg:p-14 grid grid-cols-12 gap-4 sm:gap-6">
+          {/* Nombre */}
+          <div className="col-span-12 sm:col-span-6">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Nombre
             </label>
             <input
               type="text"
-              className={`w-full border rounded border-gray-300  
-              ${
+              placeholder="Ej: Juan Pérez"
+              className={`w-full border rounded-xl px-4 py-3 text-gray-700 focus:ring-2 transition ${
                 errors.name
-                  ? "border-red-500 focus:ring-red-600 focus:border-red-600"
-                  : "focus:ring-gray-700 focus:border-gray-700"
-              } `}
-              {...register("name", {
-                required: {
-                  value: true,
-                  message: "Campo requerido",
-                },
-              })}
+                  ? "border-red-500 focus:ring-red-500"
+                  : "border-gray-300 focus:ring-green-400"
+              }`}
+              {...register("name", { required: "Campo requerido" })}
             />
-            {errors.name && <span className="text-red-500 text-sm">{errors.name.message}</span>}
+            {errors.name && (
+              <span className="text-red-500 text-xs">{errors.name.message}</span>
+            )}
           </div>
 
-          <div className="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-6">
-            <label htmlFor="phone" className="block text-gray-700 text-base w-full">
+          {/* Teléfono */}
+          <div className="col-span-12 sm:col-span-6">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Teléfono
             </label>
             <input
               type="text"
-              className={`w-full border rounded border-gray-300  
-              ${
+              placeholder="Ej: +54 9 ..."
+              className={`w-full border rounded-xl px-4 py-3 text-gray-700 focus:ring-2 transition ${
                 errors.phone
-                  ? "border-red-500 focus:ring-red-600 focus:border-red-600"
-                  : "focus:ring-gray-700 focus:border-gray-700"
-              } `}
-              {...register("phone", {
-                required: {
-                  value: true,
-                  message: "Campo requerido",
-                },
-              })}
+                  ? "border-red-500 focus:ring-red-500"
+                  : "border-gray-300 focus:ring-green-400"
+              }`}
+              {...register("phone", { required: "Campo requerido" })}
             />
-            {errors.phone && <span className="text-red-600 text-sm">{errors.phone.message}</span>}
+            {errors.phone && (
+              <span className="text-red-500 text-xs">{errors.phone.message}</span>
+            )}
           </div>
-          <div className="col-span-12 lg:col-span-4 xl:col-span-12">
-            <label htmlFor="email" className="block text-gray-700 text-base w-full">
+
+          {/* Email */}
+          <div className="col-span-12">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Correo electrónico
             </label>
             <input
-              type="text"
-              className={`w-full border rounded border-gray-300  
-              ${
+              type="email"
+              placeholder="ejemplo@mail.com"
+              className={`w-full border rounded-xl px-4 py-3 text-gray-700 focus:ring-2 transition ${
                 errors.email
-                  ? "border-red-500 focus:ring-red-600 focus:border-red-600"
-                  : "focus:ring-gray-700 focus:border-gray-700"
-              } `}
+                  ? "border-red-500 focus:ring-red-500"
+                  : "border-gray-300 focus:ring-green-400"
+              }`}
               {...register("email", {
-                required: {
-                  value: true,
-                  message: "Campo requerido",
-                },
+                required: "Campo requerido",
                 pattern: {
-                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-                  message: "Debe ser formato email",
+                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                  message: "Formato de email inválido",
                 },
               })}
             />
-            {errors.email && <span className="text-red-600 text-sm">{errors.email.message}</span>}
+            {errors.email && (
+              <span className="text-red-500 text-xs">{errors.email.message}</span>
+            )}
           </div>
-          <div className="col-span-12 md:col-span-4">
-            <label htmlFor="paxAdult" className="block text-gray-700 text-base w-full">
+
+          {/* Pax */}
+          <div className="col-span-12 sm:col-span-4">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Adultos
             </label>
             <input
               type="number"
-              className={`w-full border rounded border-gray-300  
-              ${
-                errors.paxAdult
-                  ? "border-red-500 focus:ring-red-600 focus:border-red-600"
-                  : "focus:ring-gray-700 focus:border-gray-700"
-              } `}
-              {...register("paxAdult", {
-                required: {
-                  value: true,
-                  message: "Campo requerido",
-                },
-              })}
+              className="w-full border rounded-xl px-4 py-3 border-gray-300 focus:ring-2 focus:ring-green-400"
+              {...register("paxAdult", { required: "Campo requerido" })}
             />
-            {errors.paxAdult && <span className="text-red-600 text-sm">{errors.paxAdult.message}</span>}
           </div>
-
-          <div className="col-span-12 md:col-span-4">
-            <label htmlFor="paxChildren" className="block text-gray-700 text-base w-full">
-              Menores
+          <div className="col-span-12 sm:col-span-4">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Niños
             </label>
             <input
               type="number"
-              className={`w-full border rounded border-gray-300 focus:ring-gray-700 focus:border-gray-700`}
-              {...register("paxChildren", {
-                required: { value: false },
-              })}
+              className="w-full border rounded-xl px-4 py-3 border-gray-300 focus:ring-2 focus:ring-green-400"
+              {...register("paxChildren")}
             />
-            {errors.paxChildren && <span className="text-red-600 text-sm">{errors.paxChildren.message}</span>}
           </div>
-          <div className="col-span-12 md:col-span-4">
-            <label htmlFor="paxBaby" className="block text-gray-700 text-base w-full">
+          <div className="col-span-12 sm:col-span-4">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Bebés
             </label>
             <input
               type="number"
-              className={`w-full border rounded border-gray-300 focus:ring-gray-700 focus:border-gray-700`}
-              {...register("paxBaby", {
-                required: { value: false },
-              })}
+              className="w-full border rounded-xl px-4 py-3 border-gray-300 focus:ring-2 focus:ring-green-400"
+              {...register("paxBaby")}
             />
-            {errors.paxBaby && <span className="text-red-600 text-sm">{errors.paxBaby.message}</span>}
           </div>
 
-          <div className="col-span-12 md:col-span-6">
-            <label htmlFor="checkin" className="block text-gray-700 text-base w-full">
+          {/* Fechas */}
+          <div className="col-span-12 sm:col-span-6">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Check In
             </label>
             <input
               type="date"
-              className={`w-full border rounded border-gray-300  
-              ${
+              className={`w-full border rounded-xl px-4 py-3 focus:ring-2 ${
                 errors.checkin
-                  ? "border-red-500 focus:ring-red-600 focus:border-red-600"
-                  : "focus:ring-gray-700 focus:border-gray-700"
-              } `}
-              {...register("checkin", {
-                required: {
-                  value: true,
-                  message: "Campo requerido",
-                },
-              })}
+                  ? "border-red-500 focus:ring-red-500"
+                  : "border-gray-300 focus:ring-green-400"
+              }`}
+              {...register("checkin", { required: "Campo requerido" })}
             />
-            {errors.checkin && <span className="text-red-600 text-sm">{errors.checkin.message}</span>}
           </div>
-          <div className="col-span-12 md:col-span-6">
-            <label htmlFor="checkout" className="block text-gray-700 text-base w-full">
+          <div className="col-span-12 sm:col-span-6">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Check Out
             </label>
             <input
               type="date"
-              className={`w-full border rounded border-gray-300  
-              ${
+              className={`w-full border rounded-xl px-4 py-3 focus:ring-2 ${
                 errors.checkout
-                  ? "border-red-500 focus:ring-red-600 focus:border-red-600"
-                  : "focus:ring-gray-700 focus:border-gray-700"
-              } `}
-              {...register("checkout", {
-                required: {
-                  value: true,
-                  message: "Campo requerido",
-                },
-              })}
+                  ? "border-red-500 focus:ring-red-500"
+                  : "border-gray-300 focus:ring-green-400"
+              }`}
+              {...register("checkout", { required: "Campo requerido" })}
             />
-            {errors.checkout && <span className="text-red-600 text-sm">{errors.checkout.message}</span>}
           </div>
 
+          {/* Consulta */}
           <div className="col-span-12">
-            <label htmlFor="message" className="block text-gray-700 text-base w-full">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Consulta
             </label>
             <textarea
               rows="4"
-              className={`w-full border rounded border-gray-300  
-              ${
+              placeholder="Escribí tu mensaje..."
+              className={`w-full border rounded-xl px-4 py-3 focus:ring-2 ${
                 errors.message
-                  ? "border-red-500 focus:ring-red-600 focus:border-red-600"
-                  : "focus:ring-gray-700 focus:border-gray-700"
-              } `}
-              {...register("message", {
-                required: {
-                  value: true,
-                  message: "Campo requerido",
-                },
-              })}></textarea>
-            {errors.message && <span className="text-red-600 text-sm">{errors.message.message}</span>}
+                  ? "border-red-500 focus:ring-red-500"
+                  : "border-gray-300 focus:ring-green-400"
+              }`}
+              {...register("message", { required: "Campo requerido" })}
+            ></textarea>
+            {errors.message && (
+              <span className="text-red-500 text-xs">
+                {errors.message.message}
+              </span>
+            )}
           </div>
-          <button
-            type="submit"
-            className="w-full bg-green-500 text-white px-5 py-3 focus:border-none hover:bg-green-600 col-span-12 cursor-pointer disabled:bg-gray-400 disabled:cursor-wait"
-            disabled={loading ? true : false}>
-            {!loading ? "Enviar" : "Enviando consulta..."}
-          </button>
-          {/* <p className="col-span-4 text-sm text-amber-500 text-center">Función no disponible por el momento. Tienes el botón de WhatsApp para enviarnos un mensaje.</p> */}
+
+          {/* Botón */}
+          <div className="col-span-12">
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white font-semibold px-6 py-3 rounded-xl shadow-md transition disabled:bg-gray-400"
+            >
+              {loading ? (
+                <>
+                  <span className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"></span>
+                  Enviando...
+                </>
+              ) : (
+                "Enviar consulta"
+              )}
+            </button>
+          </div>
         </div>
-        <div className="hidden xl:block xl:col-span-2">
-          <img src="/tacuifi2/7.jpg" alt="" className="rounded-lg" />
+
+        {/* Imagen lateral solo en desktop */}
+        <div className="hidden xl:block col-span-1 relative">
+          <img
+            src="/tacuifi/1.jpg"
+            alt="Cabañas Tacuifí"
+            className="h-full w-full object-cover"
+          />
+          <div className="absolute inset-0 bg-black/20 rounded-r-3xl"></div>
         </div>
       </form>
-    </div>
+    </section>
   );
 };
 

@@ -5,17 +5,18 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { FloatingWhatsApp } from "react-floating-whatsapp";
 import Home from "./pages/Home";
 import Tacuifi from "./pages/Tacuifi";
-import Tacuifi2 from "./pages/Tacuifi2";
 import Promociones from "./pages/Promociones";
-import { CONTACTO, INICIO, PROMOCIONES, TACUIFI, TACUIFI_2, UNIDAD } from "./config/rutas";
+import { CONTACTO, INICIO, PROMOCIONES, TACUIFI, UNIDAD } from "./config/rutas";
 import Error404 from "./pages/Error404";
 import Unidad from "./pages/Unidad";
 import Contacto from "./pages/Contacto";
+import ScrollToTop from "./components/ScrollToTop";
 
 const App = () => {
   return (
     <div style={{ backgroundColor: "#f5f5f5" }}>
       <BrowserRouter>
+        <ScrollToTop />
         <Navbar />
         <Routes>
           <Route exact path={INICIO} element={<Home />} />
@@ -30,12 +31,16 @@ const App = () => {
           phoneNumber="+5493546402842"
           accountName="Cabañas Tacuifí"
           avatar="/logo.png"
-          statusMessage="⏰ 9AM - 23PM"
-          chatMessage="Hola 😊! ¿En que podemos ayudarle?"
-          placeholder="Escribe un mensaje"
+          statusMessage="💬 Respondemos en minutos"
+          chatMessage="Hola 👋
+¿Querés consultar disponibilidad o precios para tu estadía?"
+          placeholder="Escribe tu consulta aquí..."
           allowClickAway
           allowEsc
+          notification
+          notificationSound
         />
+
         <Footer></Footer>
       </BrowserRouter>
     </div>
