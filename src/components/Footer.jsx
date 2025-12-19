@@ -1,80 +1,68 @@
-import { Phone, MapPin } from "lucide-react";
-import { añoActual } from "../helpers/fechas";
+import { Phone, Instagram, Facebook } from "lucide-react";
 
-const Footer = () => {
+export default function Footer() {
   return (
-    <footer className="text-white">
-      {/* Top */}
-      <div className="bg-gray-900 px-6 md:px-12">
-        <div className="flex flex-col lg:flex-row items-center justify-around gap-6 border-b border-gray-700 py-8 text-center lg:text-left">
-          {/* Teléfono */}
-          <a
-            href="tel:+543546402842"
-            className="flex items-center gap-2 text-sm md:text-base hover:text-green-400 transition"
-          >
-            <Phone size={18} />
-            +54 9 3546 402842
-          </a>
+    <footer className="border-t border-emerald-900/15 bg-[#fbfaf7]">
+      <div className="mx-auto max-w-6xl px-4 py-10">
+        {/* Fila principal */}
+        <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-6 text-center md:text-left">
+          {/* Info del alojamiento */}
+          <div>
+            <p className="text-sm font-semibold text-zinc-900">Tacuifi - Aparts & Cabañas</p>
+            <p className="text-sm text-zinc-600">Los Reartes · Valle de Calamuchita · Córdoba</p>
 
-          {/* Dirección */}
-          <p className="flex items-center gap-2 text-sm md:text-base hover:text-green-400 transition">
-            <MapPin size={18} />
-            Tacuifí I - Av. San Martín s/n
-          </p>
-        </div>
-
-        {/* Redes sociales */}
-        <div className="flex flex-col items-center py-6 gap-3">
-          <p className="uppercase tracking-widest text-sm md:text-base text-gray-300">Síguenos</p>
-          <div className="flex gap-4">
-            {/* Facebook */}
+            {/* Teléfono */}
             <a
-              href="https://www.facebook.com/Tacuifi/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-700 hover:bg-green-500 transition shadow-md"
+              href="tel:+5493510000000"
+              className="mt-2 inline-flex items-center gap-2 text-sm text-zinc-700 hover:text-emerald-900 transition"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M22 12a10 10 0 1 0-11.5 9.9v-7h-2v-3h2v-2.3c0-2 1.2-3.1 3-3.1 .9 0 1.8.1 1.8.1v2h-1c-1 0-1.3.6-1.3 1.2V12h2.2l-.3 3h-1.9v7A10 10 0 0 0 22 12z" />
-              </svg>
+              <Phone className="h-4 w-4" />
+              +54 9 3546 402842
             </a>
+          </div>
 
-            {/* Instagram */}
+          {/* Redes */}
+          <div className="flex items-center gap-4">
             <a
               href="https://www.instagram.com/tacuifi"
               target="_blank"
-              rel="noopener noreferrer"
-              className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-700 hover:bg-green-500 transition shadow-md"
+              rel="noreferrer"
+              className="flex items-center justify-center h-9 w-9 rounded-xl border border-zinc-200 text-zinc-600 hover:text-emerald-900 hover:border-emerald-900/40 transition"
+              aria-label="Instagram"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M7 2C4.2 2 2 4.2 2 7v10c0 2.8 2.2 5 5 5h10c2.8 0 5-2.2 5-5V7c0-2.8-2.2-5-5-5H7zm10 2c1.6 0 3 1.4 3 3v10c0 1.6-1.4 3-3 3H7c-1.6 0-3-1.4-3-3V7c0-1.6 1.4-3 3-3h10zm-5 3.5A5.5 5.5 0 1 0 17.5 13 5.5 5.5 0 0 0 12 7.5zm0 2A3.5 3.5 0 1 1 8.5 13 3.5 3.5 0 0 1 12 9.5zm5.8-3.3a1.3 1.3 0 1 1-2.6 0 1.3 1.3 0 0 1 2.6 0z" />
-              </svg>
+              <Instagram className="h-4 w-4" />
+            </a>
+
+            <a
+              href="https://www.facebook.com/Tacuifi/"
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center justify-center h-9 w-9 rounded-xl border border-zinc-200 text-zinc-600 hover:text-emerald-900 hover:border-emerald-900/40 transition"
+              aria-label="Facebook"
+            >
+              <Facebook className="h-4 w-4" />
             </a>
           </div>
         </div>
 
-        {/* Derechos reservados */}
-        <p className="text-sm md:text-base tracking-wider text-center pb-6">
-          © Cabañas Tacuifí - Todos los derechos reservados - {añoActual()}
-        </p>
-      </div>
+        {/* Línea divisoria */}
+        <div className="my-6 h-px bg-zinc-200/70" />
 
-      {/* Bottom */}
-      <div className="bg-gray-950 py-3">
-        <p className="text-center text-xs md:text-sm">
-          Desarrollado por{" "}
+        {/* Fila inferior */}
+        <div className="flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-zinc-500">
+          <p>© {new Date().getFullYear()} Cabañas Tacuifi. Todos los derechos reservados.</p>
+
+          {/* Footer desarrollador */}
           <a
-            href="https://www.instagram.com/maxmenvielle17"
+            href="https://maxemestudio.com"
             target="_blank"
-            rel="noopener noreferrer"
-            className="font-semibold hover:text-green-400 transition"
+            rel="noreferrer"
+            className="hover:text-zinc-700 transition"
           >
-            Max Menvielle
+            Desarrollado por · MaxEme Studio
           </a>
-        </p>
+        </div>
       </div>
     </footer>
   );
-};
-
-export default Footer;
+}

@@ -1,99 +1,136 @@
-import { NavLink } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
-import { CONTACTO, INICIO, PROMOCIONES, TACUIFI } from "../config/rutas";
+import { links, unidadesLinks } from "../config/links";
+import UnidadDropdown from "../components/UnidadDropdown";
+import UnidadDropdownMobile from "../components/UnidadDropdownMobile";
 
-const Navbar = () => {
+export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
-  const navItems = [
-    { destination: INICIO, text: "Inicio", exact: true },
-    { destination: TACUIFI, text: "Tacuifí I" },
-    { destination: PROMOCIONES, text: "Promociones" },
-    { destination: CONTACTO, text: "Contacto" },
-  ];
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 10);
+    onScroll();
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const Logo = () => (
+    <a href="#inicio" className="flex items-center select-none" aria-label="Ir a inicio">
+      <img src="/logo.png" alt="Tacuifi" className="h-12 md:h-14 w-auto object-contain scale-110 origin-left" />
+    </a>
+  );
 
   return (
-    <nav className="fixed top-0 left-0 w-full z-50 bg-black/40 backdrop-blur-md border-b border-white/10">
-      <div className="max-w-7xl mx-auto flex items-center justify-between px-6 md:px-10 h-20">
-        {/* Logo */}
-        <NavLink to={INICIO} end className="flex items-center gap-2">
-          <img
-            src="/logo.png"
-            alt="Cabañas Tacuifí"
-            className="w-12 h-12 object-contain transition-transform hover:scale-110"
-          />
-          <span className="text-white font-bold text-xl tracking-wide hidden sm:block">Cabañas Tacuifí</span>
-        </NavLink>
-
-        {/* Desktop menu */}
-        <ul className="hidden md:flex items-center gap-8">
-          {navItems.map((item) => (
-            <li key={item.destination}>
-              <NavLink
-                to={item.destination}
-                end={item.exact} // 👈 importante para que "/" no quede siempre activo
-                className={({ isActive }) =>
-                  `relative text-lg font-medium transition ${
-                    isActive ? "text-green-400 after:w-full" : "text-white hover:text-green-300 after:w-0"
-                  } 
-                  after:content-[''] after:block after:h-[2px] after:bg-green-400 
-                  after:transition-all after:duration-300 after:absolute after:left-0 after:-bottom-1`
-                }
-              >
-                {item.text}
-              </NavLink>
-            </li>
-          ))}
-        </ul>
-
-        {/* Mobile button */}
-        <button className="text-white md:hidden" onClick={() => setOpen(!open)}>
-          {open ? <X size={28} /> : <Menu size={28} />}
-        </button>
-      </div>
-
-      {/* Mobile menu */}
-      {/* Mobile menu */}
+    <header
+      className={[
+        "fixed top-0 left-0 right-0 z-50",
+        "transition-all duration-200",
+        scrolled ? "bg-[#fbf7ee]/90 backdrop-blur border-b border-emerald-900/15" : "bg-transparent",
+      ].join(" ")}
+    >
       <div
-        className={`fixed inset-0 h-screen w-screen bg-gradient-to-b from-black/95 to-black/80 backdrop-blur-md transform transition-transform duration-300 ${
-          open ? "translate-x-0" : "translate-x-full"
-        } md:hidden`}
-      >
-        {/* Header con logo y cerrar */}
-        <div className="flex justify-between items-center px-6 h-20 border-b border-white/10">
-          <NavLink to={INICIO} onClick={() => setOpen(false)}>
-            <img src="/logo.png" alt="logo" className="w-12 h-12" />
-          </NavLink>
-          <button onClick={() => setOpen(false)} className="text-white">
-            <X size={32} />
+        className={[
+          "h-[2px] w-full",
+          scrolled ? "bg-gradient-to-r from-emerald-700 via-amber-800 to-emerald-700 opacity-70" : "bg-transparent",
+        ].join(" ")}
+      />
+
+      <div className="mx-auto max-w-6xl px-4">
+        <div className="h-16 flex items-center justify-between">
+          <Logo />
+
+          {/* Desktop */}
+          <nav className="hidden lg:flex items-center gap-1">
+            {/* Inicio */}
+            <a
+              href="#inicio"
+              className="px-3 py-2 rounded-xl text-sm transition text-zinc-700 hover:text-emerald-900 hover:bg-emerald-900/5"
+            >
+              Inicio
+            </a>
+
+            {/* Dropdown Unidades */}
+            <UnidadDropdown label="Unidades" items={unidadesLinks} />
+
+            {/* Resto links */}
+            {links
+              .filter((l) => l.href !== "#inicio")
+              .map((l) => (
+                <a
+                  key={l.href}
+                  href={l.href}
+                  className="px-3 py-2 rounded-xl text-sm transition text-zinc-700 hover:text-emerald-900 hover:bg-emerald-900/5"
+                >
+                  {l.label}
+                </a>
+              ))}
+
+            <a
+              href="#contacto"
+              className="ml-2 px-4 py-2 rounded-xl text-sm font-semibold transition shadow-sm bg-emerald-800 text-white hover:bg-emerald-700"
+            >
+              Consultar
+            </a>
+          </nav>
+
+          {/* Mobile */}
+          <button
+            className={[
+              "lg:hidden inline-flex items-center justify-center h-10 w-10 rounded-xl",
+              "border border-emerald-900/15 bg-[#fffaf0]/70 backdrop-blur",
+              "hover:bg-[#fffaf0] transition",
+            ].join(" ")}
+            onClick={() => setOpen((v) => !v)}
+            aria-label={open ? "Cerrar menú" : "Abrir menú"}
+          >
+            {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
         </div>
 
-        {/* Links centrados */}
-        <ul className="flex flex-col items-center justify-center h-[calc(100%-5rem)] space-y-10">
-          {navItems.map((item) => (
-            <li key={item.destination}>
-              <NavLink
-                to={item.destination}
-                end={item.exact}
+        {/* Mobile panel */}
+        {open && (
+          <div className="lg:hidden pb-4">
+            <div className="rounded-2xl border border-emerald-900/15 bg-[#fffaf0] shadow-sm p-2">
+              <a
+                href="#inicio"
                 onClick={() => setOpen(false)}
-                className={({ isActive }) =>
-                  `relative text-2xl font-semibold tracking-wide transition ${
-                    isActive ? "text-green-400 after:w-full" : "text-white hover:text-green-300 after:w-0"
-                  } 
-            after:content-[''] after:block after:h-[3px] after:bg-green-400 
-            after:transition-all after:duration-300 after:absolute after:left-0 after:-bottom-2`
-                }
+                className="block px-3 py-2 rounded-xl text-sm text-zinc-700 hover:text-emerald-900 hover:bg-emerald-900/5 transition"
               >
-                {item.text}
-              </NavLink>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </nav>
-  );
-};
+                Inicio
+              </a>
 
-export default Navbar;
+              {/* Unidades (mobile dropdown) */}
+              <UnidadDropdownMobile
+                label="Unidades"
+                items={unidadesLinks.map(({ label, href }) => ({ label, href }))}
+                onNavigate={() => setOpen(false)}
+              />
+
+              {links
+                .filter((l) => l.href !== "#inicio")
+                .map((l) => (
+                  <a
+                    key={l.href}
+                    href={l.href}
+                    onClick={() => setOpen(false)}
+                    className="block px-3 py-2 rounded-xl text-sm text-zinc-700 hover:text-emerald-900 hover:bg-emerald-900/5 transition"
+                  >
+                    {l.label}
+                  </a>
+                ))}
+
+              <a
+                href="#contacto"
+                onClick={() => setOpen(false)}
+                className="mt-2 block text-center px-4 py-2 rounded-xl text-sm font-semibold bg-emerald-800 text-white hover:bg-emerald-700 transition"
+              >
+                Consultar
+              </a>
+            </div>
+          </div>
+        )}
+      </div>
+    </header>
+  );
+}
