@@ -1,4 +1,4 @@
-const MAIL_API_URL = "http://localhost:4000/api/contact/mail";
+const MAIL_API_URL = "https://api.tacuifi.com.ar/api/contact/mail";
 
 async function parseError(res) {
   try {
