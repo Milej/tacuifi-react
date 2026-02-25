@@ -46,7 +46,6 @@ function calcNoches(desdeISO, hastaISO) {
 
 export default function Contact() {
   const phoneE164 = "5493546402842";
-  const emailTo = "consultas@tacuifi.com.ar";
   const emailSubject = "Consulta de disponibilidad - Cabañas Tacuifi";
 
   const [showChannelPick, setShowChannelPick] = useState(false);
@@ -75,6 +74,8 @@ export default function Contact() {
     mode: "onSubmit",
     defaultValues: {
       nombre: "",
+      email: "",
+      telefono: "",
       unidad: "",
       fechas: { desde: "", hasta: "" },
       personas: { adultos: 1, menores: 0 },
@@ -248,8 +249,10 @@ export default function Contact() {
       setSendingMail(true);
 
       await enviarConsultaMail({
-        to: emailTo,
         subject: emailSubject,
+        name: getValues("nombre"),
+        email: getValues("email"),
+        phone: getValues("telefono"),
         message: sendMessage, // SIN emojis
       });
 
@@ -280,6 +283,8 @@ export default function Contact() {
       reset(
         {
           nombre: "",
+          email: "",
+          telefono: "",
           unidad: keepUnidad,
           fechas: { desde: "", hasta: "" },
           personas: keepPersonas,
@@ -327,6 +332,36 @@ export default function Contact() {
                 minLength: { value: 2, message: "Mínimo 2 caracteres" },
                 maxLength: { value: 60, message: "Máximo 60 caracteres" },
                 validate: (v) => (String(v || "").trim().length >= 2 ? true : "Decinos tu nombre"),
+              })}
+            />
+
+            <ContactField
+              label="Email"
+              type="email"
+              placeholder="tuemail@dominio.com"
+              error={errors.email?.message}
+              register={register("email", {
+                required: "Decinos tu email",
+                pattern: {
+                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                  message: "Ingresá un email válido",
+                },
+              })}
+            />
+
+            <ContactField
+              label="Teléfono"
+              type="tel"
+              placeholder="+54 9 3546 123456"
+              error={errors.telefono?.message}
+              register={register("telefono", {
+                required: "Decinos tu teléfono",
+                minLength: { value: 8, message: "Mínimo 8 caracteres" },
+                maxLength: { value: 30, message: "Máximo 30 caracteres" },
+                validate: (v) =>
+                  /^[0-9+()\-\s]+$/.test(String(v || "").trim())
+                    ? true
+                    : "Usá solo números, espacios y símbolos + - ( )",
               })}
             />
 

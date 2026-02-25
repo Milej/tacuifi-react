@@ -9,7 +9,7 @@ async function parseError(res) {
   }
 }
 
-export async function enviarConsultaMail({ message, meta }) {
+export async function enviarConsultaMail({ message, subject, name, email, phone }) {
   try {
     const res = await fetch(MAIL_API_URL, {
       method: "POST",
@@ -18,7 +18,10 @@ export async function enviarConsultaMail({ message, meta }) {
       },
       body: JSON.stringify({
         message,
-        meta, 
+        subject,
+        name,
+        email,
+        phone,
       }),
     });
 
