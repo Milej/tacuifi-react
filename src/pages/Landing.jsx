@@ -8,41 +8,72 @@ import Location from "../components/Location";
 import Contact from "../components/Contact";
 import Footer from "../components/Footer";
 
+import Reveal from "../components/ui/Reveal";
+import SectionWrap from "../components/ui/SectionWrap";
+
 export default function Landing() {
+  const BG = {
+    base: "#f3f1eb",
+    mid: "#ebe6dc",
+    deep: "#e3ddd1",
+    white: "#ffffff",
+  };
+
   return (
-    <div className="min-h-screen bg-[#fbfaf7] text-zinc-900">
+    <div className="min-h-screen text-zinc-900" style={{ backgroundColor: BG.base }}>
       <Navbar />
+
       <main className="pt-16">
         <Hero />
 
-        {/* NAVLINKS / SECCIONES */}
-        <section id="apartamentos">
-          <Units variant="apartamentos" />
-        </section>
+        {/* ✅ Hero ya fanea a BG.mid. Acá no top fade. Y no bottom fade porque la siguiente también es BG.mid */}
+        <SectionWrap id="apartamentos" bg={BG.mid} className="py-0">
+          <Reveal className="px-0" delay={0}>
+            <Units variant="apartamentos" />
+          </Reveal>
+        </SectionWrap>
 
-        <section id="cabanas-de-piedra">
-          <Units variant="piedra" />
-        </section>
+        {/* ✅ mid -> white */}
+        <SectionWrap id="cabanas-de-piedra" bg={BG.mid} fadeBottomTo={BG.white}>
+          <Reveal delay={60}>
+            <Units variant="piedra" />
+          </Reveal>
+        </SectionWrap>
 
-        <section id="instalaciones">
-          <Facilities />
-        </section>
+        {/* ✅ white -> deep */}
+        <SectionWrap id="instalaciones" bg={BG.white} fadeBottomTo={BG.deep}>
+          <Reveal delay={80}>
+            <Facilities />
+          </Reveal>
+        </SectionWrap>
 
-        <section id="galeria">
-          <Gallery />
-        </section>
+        {/* ✅ deep -> mid */}
+        <SectionWrap id="galeria" bg={BG.deep} fadeBottomTo={BG.mid}>
+          <Reveal delay={90}>
+            <Gallery />
+          </Reveal>
+        </SectionWrap>
 
-        <section id="promociones">
-          <Promotions />
-        </section>
+        {/* ✅ mid -> white */}
+        <SectionWrap id="promociones" bg={BG.mid} fadeBottomTo={BG.white}>
+          <Reveal delay={100}>
+            <Promotions />
+          </Reveal>
+        </SectionWrap>
 
-        <section id="ubicacion">
-          <Location />
-        </section>
+        {/* ✅ white -> deep */}
+        <SectionWrap id="ubicacion" bg={BG.white} fadeBottomTo={BG.deep}>
+          <Reveal delay={110}>
+            <Location />
+          </Reveal>
+        </SectionWrap>
 
-        <section id="contacto">
-          <Contact />
-        </section>
+        {/* ✅ deep -> base (cierre) */}
+        <SectionWrap id="contacto" bg={BG.deep} fadeBottomTo={BG.base}>
+          <Reveal delay={120}>
+            <Contact />
+          </Reveal>
+        </SectionWrap>
 
         <Footer />
       </main>

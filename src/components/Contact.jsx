@@ -146,7 +146,27 @@ export default function Contact() {
   // -----------------------------
   // Prefill desde Units (sessionStorage + evento)
   // -----------------------------
+  // adentro del useEffect de prefill, reemplazá applyPrefill por este:
   useEffect(() => {
+    const addDays = (dateStr, days) => {
+      if (!dateStr) return "";
+      const [y, m, d] = dateStr.split("-").map(Number);
+      const date = new Date(y, m - 1, d);
+      date.setDate(date.getDate() + days);
+      const yyyy = date.getFullYear();
+      const mm = String(date.getMonth() + 1).padStart(2, "0");
+      const dd = String(date.getDate()).padStart(2, "0");
+      return `${yyyy}-${mm}-${dd}`;
+    };
+
+    const isValidISODate = (dateStr) => {
+      if (!dateStr || typeof dateStr !== "string") return false;
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return false;
+      const [y, m, d] = dateStr.split("-").map(Number);
+      const dt = new Date(y, m - 1, d);
+      return dt.getFullYear() === y && dt.getMonth() === m - 1 && dt.getDate() === d;
+    };
+
     const applyPrefill = () => {
       try {
         const raw = sessionStorage.getItem("contact_prefill");
@@ -163,9 +183,28 @@ export default function Contact() {
           setHadPrefill(true);
         }
 
-        if (data?.message) {
-          // si en algún momento querés enchufar esto a userNote:
-          // setUserNote(String(data.message || ""));
+        // ✅ FECHAS: soporta data.fechasPrefill o data.fechas (por si cambiaste el nombre)
+        const fechasIn = data?.fechasPrefill || data?.fechas || null;
+
+        if (fechasIn) {
+          const desdeRaw = String(fechasIn?.desde || "").trim();
+          const hastaRaw = String(fechasIn?.hasta || "").trim();
+
+          const desdeOk = isValidISODate(desdeRaw) ? desdeRaw : "";
+          let hastaOk = isValidISODate(hastaRaw) ? hastaRaw : "";
+
+          // si viene solo "desde", generamos "hasta" mínimo
+          if (desdeOk && !hastaOk) hastaOk = addDays(desdeOk, 1);
+
+          // si hasta es menor/equivale, corregimos
+          if (desdeOk && hastaOk && hastaOk <= desdeOk) {
+            hastaOk = addDays(desdeOk, 1);
+          }
+
+          if (desdeOk || hastaOk) {
+            setValue("fechas", { desde: desdeOk, hasta: hastaOk }, { shouldValidate: false, shouldDirty: false });
+            setHadPrefill(true);
+          }
         }
       } catch (e) {}
     };
@@ -185,7 +224,7 @@ export default function Contact() {
   // -----------------------------
   const waLink = useMemo(
     () => `https://wa.me/${phoneE164}?text=${encodeURIComponent(sendMessage)}`,
-    [phoneE164, sendMessage]
+    [phoneE164, sendMessage],
   );
 
   // 1) Submit: valida y abre selector
@@ -246,7 +285,7 @@ export default function Contact() {
           personas: keepPersonas,
           mensaje: "",
         },
-        { keepErrors: false, keepDirty: false, keepTouched: false }
+        { keepErrors: false, keepDirty: false, keepTouched: false },
       );
     } catch (err) {
       const msg = err?.message || "No se pudo enviar el email.";
@@ -266,20 +305,15 @@ export default function Contact() {
   };
 
   return (
-    <section id="contacto" className="relative py-14 md:py-16">
-      {/* Fondo suave */}
-      <div className="absolute inset-0 -z-10 bg-white" />
-      <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_18%_18%,rgba(16,185,129,0.07),transparent_55%),radial-gradient(circle_at_82%_28%,rgba(14,165,233,0.06),transparent_50%)]" />
-      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-[#fbfaf7] via-white to-white" />
-
+    <section className="relative py-14 md:py-16">
       <SectionTitle
         eyebrow="Contacto"
         title="Consultas y reservas"
-        desc="Completá el form y enviá tu consulta en 10 segundos."
+        desc="Completá el formoulario y envianos tu consulta."
       />
 
       <div className="mx-auto max-w-6xl px-4 mt-8">
-        <div className="relative rounded-3xl border border-zinc-200/80 bg-white/70 backdrop-blur-sm shadow-sm p-6">
+        <div className="relative rounded-3xl border border-zinc-100/80 bg-white/95 shadow-xl shadow-zinc-950/10 p-6 md:p-7">
           <p className="font-semibold text-zinc-900">Consulta rápida</p>
           <p className="text-sm text-zinc-600 mt-1">Te pedimos lo mínimo para responderte rápido.</p>
 

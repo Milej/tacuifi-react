@@ -18,8 +18,7 @@ export default function Units({ variant = "apartamentos" }) {
   const links = unit.links || {};
 
   return (
-    <section className="relative py-14 md:py-16 bg-[#fbfaf7]">
-      {/* ✅ SOLO acá va título/subtítulo */}
+    <section className="relative py-14 md:py-16">
       <SectionTitle eyebrow="Unidades" title={unit.title} desc={unit.subtitle} />
 
       <div className="mx-auto max-w-6xl px-4 mt-8 grid lg:grid-cols-2 gap-6 items-start">

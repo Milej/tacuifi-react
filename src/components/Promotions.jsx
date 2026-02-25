@@ -3,15 +3,57 @@ import SectionTitle from "./SectionTitle";
 import { goToContactWithPrefill } from "../helpers/goToContactWithPrefill";
 import { UNIDADES } from "../config/unidades";
 
-const promos = [];
+const promos = [
+  {
+    id: "3x2",
+    title: "Promo 3x2",
+    desc: "Pagás 2 noches y te regalamos 1. Ideal para escapadas entre semana.",
+    dates: "Todo el año (según disponibilidad)",
+    notValid: "No válida para finde largo",
+    type: "nxm",
+    pay: 2,
+    get: 3,
+  },
+  {
+    id: "4x3",
+    title: "Promo 4x3",
+    desc: "Pagás 3 noches y te regalamos 1. Perfecta para descansar un poco más.",
+    dates: "Todo el año (según disponibilidad)",
+    notValid: "No válida para finde largo",
+    type: "nxm",
+    pay: 3,
+    get: 4,
+  },
+  {
+    id: "jubilados-20",
+    title: "20% OFF Jubilados",
+    desc: "Descuento exclusivo para jubilados. Se solicita acreditación al llegar.",
+    dates: "Todo el año (según disponibilidad)",
+    notValid: "No válida para finde largo",
+    type: "percent",
+    percent: 20,
+  },
+  {
+    id: "larga-5",
+    title: "Descuentos en estadías largas (+5 noches)",
+    desc: "Precio especial en reservas de 5 noches o más. Consultanos fechas y unidad.",
+    dates: "Todo el año (según disponibilidad)",
+    notValid: "No válida para finde largo",
+    type: "longStay",
+    minNights: 5,
+  },
+];
 
 export default function Promotions() {
   const unitFallback = UNIDADES?.[0] || null;
 
   return (
-    <section className="relative py-14 md:py-16 bg-white">
-      {/* fondo suave como venimos usando */}
-      <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_15%_20%,rgba(16,185,129,0.06),transparent_55%),radial-gradient(circle_at_85%_30%,rgba(120,53,15,0.06),transparent_55%)]" />
+    <section className="relative py-14 md:py-16">
+      <SectionTitle
+        eyebrow="Promociones"
+        title="Promos y oportunidades"
+        desc="En este espacio te mostramos las promociones vigentes. Si no hay, podés consultarnos igual para que te asesoremos."
+      />
 
       <SectionTitle
         eyebrow="Promociones"
@@ -49,11 +91,11 @@ export default function Promotions() {
             </div>
           </div>
         ) : (
-          // ✅ Lista de promos (cuando haya)
+          // ✅ Lista de promos
           <div className="grid md:grid-cols-2 gap-5">
             {promos.map((p) => (
               <div
-                key={p.title}
+                key={p.id}
                 className="rounded-3xl border border-zinc-200/80 bg-white/70 backdrop-blur-sm shadow-sm ring-1 ring-black/[0.03] p-6"
               >
                 <div className="flex items-start justify-between gap-4">
@@ -65,14 +107,15 @@ export default function Promotions() {
                     <div>
                       <h3 className="font-semibold text-zinc-900">{p.title}</h3>
                       <p className="text-sm text-zinc-600 mt-1 leading-relaxed">{p.desc}</p>
+
+                      {/* 👇 condición “no válida para finde largo” */}
+                      {p.notValid && (
+                        <p className="mt-2 text-xs text-zinc-500">
+                          <span className="font-semibold text-zinc-700">Importante:</span> {p.notValid}
+                        </p>
+                      )}
                     </div>
                   </div>
-
-                  {p.tag && (
-                    <span className="text-[11px] px-2.5 py-1 rounded-full bg-white border border-zinc-200 text-zinc-600">
-                      {p.tag}
-                    </span>
-                  )}
                 </div>
 
                 <div className="mt-5 flex flex-wrap items-center gap-3">

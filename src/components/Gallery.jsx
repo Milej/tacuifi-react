@@ -46,11 +46,11 @@ export default function Gallery() {
   };
 
   return (
-    <section id="galeria" className="relative py-14 md:py-16 bg-[#fbfaf7]">
+    <section id="galeria" className="relative py-14 md:py-16">
       <SectionTitle
         eyebrow="Galería"
         title="Un vistazo al lugar"
-        desc="Tocá cualquier foto para verla en pantalla completa y pasar como carrusel."
+        desc="Tocá cualquier foto para verla en pantalla completa."
       />
 
       {/* Grid */}

@@ -1,86 +1,91 @@
-import { MapPin, Trees, Sparkles } from "lucide-react";
-import InfoPill from "./InfoPill";
+import { useMemo, useState } from "react";
+import { MessageCircle } from "lucide-react";
+
+import DateRangeField from "./DateRangeField";
+import GuestsPicker from "./GuestsPicker";
 
 export default function Hero() {
   const bgImage = "/hero.jpg";
 
+  const NEXT_BG = "#ebe6dc";
+
+  const [fechas, setFechas] = useState({ desde: "", hasta: "" });
+  const [personas, setPersonas] = useState({ adultos: 2, menores: 0 });
+
+  const goContact = () => {
+    sessionStorage.setItem(
+      "contact_prefill",
+      JSON.stringify({
+        fechasPrefill: { desde: fechas?.desde || "", hasta: fechas?.hasta || "" },
+        personasPrefill: {
+          adultos: Number(personas?.adultos ?? 1),
+          menores: Number(personas?.menores ?? 0),
+        },
+      }),
+    );
+
+    // ✅ avisamos al form que lea el prefill
+    window.dispatchEvent(new Event("contact:prefill"));
+
+    // ✅ scroll suave al final (sin depender del hash)
+    const section = document.getElementById("contacto");
+    if (section) {
+      section.scrollIntoView({ behavior: "smooth", block: "start" });
+    } else {
+      // fallback por si todavía no está montado
+      window.location.hash = "#contacto";
+    }
+  };
+
   return (
     <section
       id="inicio"
-      className="relative min-h-[78vh] md:min-h-[82vh] flex items-center overflow-hidden"
+      className="relative overflow-hidden"
       style={{
         backgroundImage: `url(${bgImage})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
     >
-      {/* Overlay base (suave, general) */}
-      <div className="absolute inset-0 bg-black/35" />
+      <div className="absolute inset-0 bg-black/40" />
 
-      {/* Overlay vertical (como ya tenías) */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/30 to-[#fbf7ee]/10" />
-
-      {/* Overlay lateral SOLO para mejorar lectura del texto (clave) */}
-      <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/35 to-transparent" />
-
-      <div className="relative mx-auto max-w-6xl px-4 pt-20 pb-14 md:pt-24 md:pb-20 w-full">
-        {/* Bloque con panel MUY sutil para contraste (no se ve como “caja”) */}
-        <div className="max-w-2xl rounded-3xl bg-black/25 backdrop-blur-[2px] p-6 md:p-8 border border-white/10">
-          {/* Eyebrow */}
-          <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs text-white backdrop-blur">
-            <Sparkles className="h-4 w-4" />
-            Los Reartes · Valle de Calamuchita
-          </div>
-
-          <h1
-            className="mt-4 text-4xl md:text-5xl font-semibold tracking-tight text-white"
-            style={{ textShadow: "0 2px 18px rgba(0,0,0,0.55)" }}
-          >
-            Tacuifí
-            <span
-              className="block text-white/90 font-normal text-2xl md:text-3xl mt-2"
-              style={{ textShadow: "0 2px 18px rgba(0,0,0,0.55)" }}
-            >
-              Apart & Cabañas
-            </span>
-          </h1>
-
-          <p
-            className="mt-4 text-base md:text-lg text-white/90 leading-relaxed"
-            style={{ textShadow: "0 2px 16px rgba(0,0,0,0.55)" }}
-          >
-            Ubicadas sobre la avenida principal, en un amplio predio iluminado, parquizado y arbolado. A 200 mts del río
-            y a 350 mts del casco histórico.
+      <div className="relative mx-auto max-w-6xl px-4 pt-28 pb-16">
+        <div className="max-w-2xl">
+          <h1 className="text-5xl md:text-6xl font-semibold tracking-tight text-white">Tacuifí</h1>
+          <p className="mt-2 text-xl md:text-2xl text-white/90 font-light">Apart & Cabañas — Los Reartes</p>
+          <p className="mt-6 text-base md:text-lg text-white/90 leading-relaxed">
+            Predio amplio, arbolado e iluminado sobre la avenida principal. Un lugar tranquilo para descansar, a pasos
+            del río y cerca de todo.
           </p>
+        </div>
 
-          {/* CTAs */}
-          <div className="mt-7 flex flex-wrap gap-3">
-            <a
-              href="#apartamentos"
-              className="px-5 py-3 rounded-2xl bg-emerald-800 text-white font-semibold text-sm hover:bg-emerald-700 transition shadow-sm"
-            >
-              Ver unidades
-            </a>
+        <div className="mt-14">
+          <div className="rounded-3xl border border-zinc-200/80 bg-white/90 backdrop-blur-sm shadow-xl p-6">
+            <div className="grid grid-cols-1 md:grid-cols-[1fr_1fr_auto] gap-4 items-end">
+              <DateRangeField value={fechas} onChange={setFechas} error={""} />
+              <GuestsPicker value={personas} onChange={setPersonas} error={""} />
 
-            <a
-              href="#galeria"
-              className="px-5 py-3 rounded-2xl border border-white/25 bg-white/10 text-white font-semibold text-sm hover:bg-white/15 transition backdrop-blur"
-            >
-              Ver galería
-            </a>
-          </div>
-
-          {/* Píldoras */}
-          <div className="mt-10 grid sm:grid-cols-3 gap-3">
-            <InfoPill icon={Trees} title="Predio arbolado" desc="Parquizado e iluminado" />
-            <InfoPill icon={MapPin} title="A 200 mts del río" desc="Y 350 mts del centro" />
-            <InfoPill icon={Sparkles} title="Ambiente tranquilo" desc="Ideal para descansar y desconectar" />
+              <div className="flex md:justify-end">
+                <button
+                  type="button"
+                  onClick={goContact}
+                  className="inline-flex items-center justify-center gap-2 rounded-2xl bg-emerald-800 px-6 py-3 text-sm font-semibold text-white hover:bg-emerald-700 transition focus:outline-none focus:ring-2 focus:ring-emerald-900/20 whitespace-nowrap"
+                >
+                  <MessageCircle className="h-5 w-5" />
+                  Consultar
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Fade abajo para empalmar con el resto */}
-      <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-b from-transparent to-[#fbfaf7]" />
+      <div
+        className="pointer-events-none absolute bottom-0 left-0 right-0 h-24"
+        style={{
+          background: `linear-gradient(to bottom, rgba(0,0,0,0), ${NEXT_BG})`,
+        }}
+      />
     </section>
   );
 }

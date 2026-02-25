@@ -21,3 +21,11 @@ h5,
 h6 {
   font-family: Titulo;
 }
+
+html {
+  scroll-behavior: smooth;
+}
+
+section {
+  scroll-margin-top: 10px; 
+}

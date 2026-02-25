@@ -8,21 +8,13 @@ const items = [
   { icon: Car, title: "Estacionamiento", desc: "Comodidad al llegar, con lugar para dejar el auto." },
   { icon: ShieldCheck, title: "Entorno tranquilo", desc: "Ambiente familiar y seguro para descansar de verdad." },
   { icon: Sparkles, title: "Limpieza", desc: "Unidades y espacios comunes limpios y ordenados." },
-  {
-    icon: Baby,
-    title: "Ideal familias",
-    desc: "Apto para estadías familiares.",
-  },
-
+  { icon: Baby, title: "Ideal familias", desc: "Apto para estadías familiares." },
   { icon: MapPin, title: "Ubicación práctica", desc: "Fácil acceso y entorno natural, perfecto para desconectar." },
 ];
 
 export default function Facilities() {
   return (
-    <section className="relative py-14 md:py-16 bg-white">
-      {/* fondo suave como el resto del sitio */}
-      <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_15%_20%,rgba(16,185,129,0.06),transparent_55%),radial-gradient(circle_at_85%_30%,rgba(120,53,15,0.06),transparent_55%)]" />
-
+    <section className="relative py-14 md:py-16">
       <SectionTitle eyebrow="Instalaciones" title="Exterior & servicios" desc="Todo lo necesario para tu estadía." />
 
       <div className="mx-auto max-w-6xl px-4 mt-8">
@@ -30,12 +22,31 @@ export default function Facilities() {
           {items.map(({ icon: Icon, title, desc }) => (
             <div
               key={title}
-              className="group rounded-3xl border border-zinc-200/80 bg-white/70 backdrop-blur-sm shadow-sm ring-1 ring-black/[0.03] p-5 transition hover:-translate-y-0.5 hover:shadow-md"
+              className="
+                group h-full
+                rounded-3xl
+                border border-black/5
+                bg-white/80
+                shadow-[0_10px_30px_-22px_rgba(0,0,0,.35)]
+                ring-1 ring-black/[0.03]
+                p-5
+                transition
+                hover:-translate-y-0.5 hover:bg-white hover:shadow-[0_14px_36px_-24px_rgba(0,0,0,.45)]
+              "
             >
               <div className="flex items-start gap-3">
-                {/* ✅ icon badge sin "aplastarse" */}
-                <div className="h-11 w-11 rounded-2xl border border-zinc-200 bg-zinc-50 flex items-center justify-center shrink-0 leading-none group-hover:bg-white transition">
-                  <Icon className="h-5 w-5 text-zinc-700 shrink-0" />
+                <div
+                  className="
+                    h-11 w-11 shrink-0
+                    rounded-2xl
+                    border border-black/5
+                    bg-zinc-50
+                    flex items-center justify-center
+                    transition
+                    group-hover:bg-white
+                  "
+                >
+                  <Icon className="h-5 w-5 text-zinc-700" />
                 </div>
 
                 <div className="min-w-0">
@@ -46,6 +57,11 @@ export default function Facilities() {
             </div>
           ))}
         </div>
+
+        {/* ✅ opcional: mini nota elegante abajo */}
+        <p className="mt-6 text-sm text-zinc-600">
+          Si necesitás algo puntual para tu estadía, escribinos y lo coordinamos.
+        </p>
       </div>
     </section>
   );
