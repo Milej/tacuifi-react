@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
-import { ChevronLeft, ChevronRight, Expand } from "lucide-react";
+import { ChevronLeft, ChevronRight, Expand, Loader2 } from "lucide-react";
 import FullscreenViewer from "./FullscreenViewer";
 
 function buildImgPath(folder, file) {
@@ -13,8 +13,11 @@ export default function UnitCarousel({
   altBase = "Unidad",
   className = "",
 }) {
+  const sectionRef = useRef(null);
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(0);
+  const [shouldLoad, setShouldLoad] = useState(false);
+  const [loadedSet, setLoadedSet] = useState(() => new Set());
 
   const [emblaRef, emblaApi] = useEmblaCarousel({
     loop: true,
@@ -41,6 +44,32 @@ export default function UnitCarousel({
   const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
   const scrollTo = useCallback((i) => emblaApi?.scrollTo(i), [emblaApi]);
 
+  useEffect(() => {
+    const node = sectionRef.current;
+    if (!node) return;
+
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        setShouldLoad(true);
+        io.disconnect();
+      },
+      { root: null, rootMargin: "200px 0px", threshold: 0.1 },
+    );
+
+    io.observe(node);
+    return () => io.disconnect();
+  }, []);
+
+  const markLoaded = (file) => {
+    setLoadedSet((prev) => {
+      if (prev.has(file)) return prev;
+      const next = new Set(prev);
+      next.add(file);
+      return next;
+    });
+  };
+
   if (!folder || !images?.length) {
     return (
       <div
@@ -58,11 +87,21 @@ export default function UnitCarousel({
   return (
     <>
       <div
+        ref={sectionRef}
         className={[
           "group relative rounded-3xl overflow-hidden border border-emerald-900/15 bg-white/40",
           className,
         ].join(" ")}
       >
+        {!shouldLoad && (
+          <div className="absolute inset-0 z-30 grid place-items-center bg-white/70 backdrop-blur-[1px]">
+            <div className="inline-flex items-center gap-2 rounded-2xl border border-zinc-200 bg-white/90 px-3 py-2 text-xs text-zinc-700 shadow-sm">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Cargando imágenes...
+            </div>
+          </div>
+        )}
+
         {/* Viewport */}
         <div ref={emblaRef} className="overflow-hidden">
           <div className="flex touch-pan-y">
@@ -80,11 +119,18 @@ export default function UnitCarousel({
                   aria-label="Ver en pantalla completa"
                 >
                   <div className="relative aspect-[16/10] bg-black/5">
+                    {!loadedSet.has(img) && <div className="absolute inset-0 z-10 animate-pulse bg-zinc-200/80" />}
                     <img
-                      src={buildImgPath(folder, img)}
+                      src={shouldLoad ? buildImgPath(folder, img) : undefined}
                       alt={`${altBase} - ${idx + 1}`}
-                      className="absolute inset-0 h-full w-full object-cover"
-                      loading="lazy"
+                      className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-300 ${
+                        loadedSet.has(img) ? "opacity-100" : "opacity-0"
+                      }`}
+                      loading={idx === active ? "eager" : "lazy"}
+                      decoding="async"
+                      fetchPriority={idx === active ? "high" : "low"}
+                      sizes="(max-width: 1024px) 100vw, 50vw"
+                      onLoad={() => markLoaded(img)}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/0 to-black/0" />
 

@@ -57,11 +57,6 @@ export default function Facilities() {
             </div>
           ))}
         </div>
-
-        {/* ✅ opcional: mini nota elegante abajo */}
-        <p className="mt-6 text-sm text-zinc-600">
-          Si necesitás algo puntual para tu estadía, escribinos y lo coordinamos.
-        </p>
       </div>
     </section>
   );

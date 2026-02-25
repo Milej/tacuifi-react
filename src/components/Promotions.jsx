@@ -55,12 +55,6 @@ export default function Promotions() {
         desc="En este espacio te mostramos las promociones vigentes. Si no hay, podés consultarnos igual para que te asesoremos."
       />
 
-      <SectionTitle
-        eyebrow="Promociones"
-        title="Promos y oportunidades"
-        desc="En este espacio te mostramos las promociones vigentes. Si no hay, podés consultarnos igual para que te asesoremos."
-      />
-
       <div className="mx-auto max-w-6xl px-4 mt-8">
         {promos.length === 0 ? (
           <div className="rounded-3xl border border-zinc-200/80 bg-white/70 backdrop-blur-sm shadow-sm ring-1 ring-black/[0.03] p-6 md:p-8">
