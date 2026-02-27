@@ -1,11 +1,11 @@
-@import url('https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;500;600;700&family=Made+Bon+Boyage&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Libre+Franklin:wght@400;500;600;700&family=Made+Bon+Boyage&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 * {
-  font-family: 'Libre Franklin', sans-serif;
+  font-family: 'Roboto', sans-serif;
 }
 h1,
 h2,
