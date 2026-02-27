@@ -1,0 +1,75 @@
+{
+  "name": "Cabañas Tacuifí",
+  "short_name": "Tacuifí",
+  "description": "Alojamiento de lujo en Los Reartes, Valle de Calamuchita, Córdoba. Cabañas completas con WiFi, piscina y estacionamiento.",
+  "start_url": "https://tacuifi.com.ar/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "theme_color": "#16a34a",
+  "background_color": "#ffffff",
+  "lang": "es-AR",
+  "categories": ["travel", "accommodation"],
+  "screenshots": [
+    {
+      "src": "https://tacuifi.com.ar/logo-transparente.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "any"
+    },
+    {
+      "src": "https://tacuifi.com.ar/galeria/galeria-1.jpg",
+      "sizes": "540x720",
+      "type": "image/jpg",
+      "form_factor": "narrow"
+    }
+  ],
+  "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Unidades",
+      "short_name": "Unidades",
+      "description": "Ver nuestras cabañas disponibles",
+      "url": "https://tacuifi.com.ar/#unidades",
+      "icons": [
+        {
+          "src": "/logo.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Contacto",
+      "short_name": "Contacto",
+      "description": "Ponte en contacto con nosotros",
+      "url": "https://tacuifi.com.ar/#contacto",
+      "icons": [
+        {
+          "src": "/logo.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ]
+}

@@ -25,13 +25,13 @@ const promos = [
     get: 4,
   },
   {
-    id: "jubilados-20",
-    title: "20% OFF Jubilados",
+    id: "jubilados-10",
+    title: "10% OFF Jubilados",
     desc: "Descuento exclusivo para jubilados. Se solicita acreditación al llegar.",
     dates: "Todo el año (según disponibilidad)",
     notValid: "No válida para finde largo",
     type: "percent",
-    percent: 20,
+    percent: 10,
   },
   {
     id: "larga-5",

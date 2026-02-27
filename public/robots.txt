@@ -1,0 +1,17 @@
+User-agent: *
+Allow: /
+Disallow: /private/
+Disallow: /*.json$
+Disallow: /admin/
+
+# Crawl delay
+Crawl-delay: 1
+
+# Sitemap
+Sitemap: https://tacuifi.com.ar/sitemap.xml
+Sitemap: https://tacuifi.com.ar/sitemap-mobile.xml
+
+# Google specific
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 0

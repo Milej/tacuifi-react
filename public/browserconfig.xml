@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<browserconfig>
+  <msapplication>
+    <tile>
+      <square150x150logo src="/logo.png"/>
+      <TileColor>#16a34a</TileColor>
+    </tile>
+    <notification>
+      <polling-uri src="https://tacuifi.com.ar/"/>
+      <polling-uri2 src="https://tacuifi.com.ar/"/>
+      <polling-uri3 src="https://tacuifi.com.ar/"/>
+      <polling-uri4 src="https://tacuifi.com.ar/"/>
+      <polling-uri5 src="https://tacuifi.com.ar/"/>
+      <frequency>30</frequency>
+      <cycle>1</cycle>
+    </notification>
+  </msapplication>
+</browserconfig>
