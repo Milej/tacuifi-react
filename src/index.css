@@ -1,25 +1,99 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Libre+Franklin:wght@400;500;600;700&family=Made+Bon+Boyage&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Libre+Franklin:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-* {
-  font-family: 'Roboto', sans-serif;
+:root {
+  --tacuifi-bg: #f3f1eb;
+  --tacuifi-surface: rgba(255, 255, 255, 0.82);
+  --tacuifi-surface-solid: #fbfaf7;
+  --tacuifi-surface-deep: #ebe6dc;
+  --tacuifi-surface-alt: #e3ddd1;
+  --tacuifi-primary: #14532d;
+  --tacuifi-primary-soft: #1f6a3b;
+  --tacuifi-border: rgba(20, 83, 45, 0.12);
+  --tacuifi-text: #18181b;
+  --tacuifi-muted: #52525b;
 }
+
+* {
+  box-sizing: border-box;
+  font-family: 'Libre Franklin', sans-serif;
+}
+
 h1,
 h2,
 h3,
 h4,
 h5,
 h6 {
-  font-family: 'Made Bon Boyage', cursive;
+  font-family: 'Cormorant Garamond', serif;
 }
 
 html {
   scroll-behavior: smooth;
 }
 
+body {
+  margin: 0;
+  background: var(--tacuifi-bg);
+  color: var(--tacuifi-text);
+}
+
+input,
+select,
+textarea,
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+select:focus-visible {
+  outline: none;
+  border-color: rgba(20, 83, 45, 0.28);
+  box-shadow: 0 0 0 2px rgba(20, 83, 45, 0.1);
+}
+
+#root {
+  min-height: 100vh;
+}
+
 section {
-  scroll-margin-top: 10px; 
+  scroll-margin-top: 10px;
+}
+
+.font-display {
+  font-family: 'Cormorant Garamond', serif;
+}
+
+@keyframes tacuifi-toast-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -10px, 0) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes tacuifi-toast-progress {
+  from {
+    transform: scaleX(1);
+  }
+
+  to {
+    transform: scaleX(0);
+  }
+}
+
+.tacuifi-toast-enter {
+  animation: tacuifi-toast-in 220ms ease-out;
+}
+
+.tacuifi-toast-progress {
+  animation-name: tacuifi-toast-progress;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
 }

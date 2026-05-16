@@ -1,29 +1,19 @@
-const UNITS = ["Apartamento", "Cabaña de piedra"];
-
-function normalizeUnidad(input) {
-  const raw = String(input || "").trim();
-  const v = raw.toLowerCase();
-
-  if (v.includes("apart")) return "Apartamento";
-  if (v.includes("piedra")) return "Cabaña de piedra";
-
-  // si viene algo raro, lo dejamos (pero vamos a mostrar placeholder)
-  return raw;
+function normalizeUnitLabel(input) {
+  return String(input || "").trim();
 }
 
-export default function UnitSelect({ value, onChange, error }) {
-  const normalizedValue = normalizeUnidad(value);
-
-  const isValid = UNITS.includes(normalizedValue);
+export default function UnitSelect({ value, onChange, error, options = [] }) {
+  const normalizedValue = normalizeUnitLabel(value);
+  const isValid = options.includes(normalizedValue);
   const selectValue = isValid ? normalizedValue : "";
 
   return (
     <div>
-      <label className="block text-xs text-zinc-600 mb-1">Unidad</label>
+      <label className="mb-1 block text-xs text-zinc-600">Unidad</label>
 
       <select
         value={selectValue}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(event) => onChange(event.target.value)}
         className={[
           "w-full rounded-2xl border bg-white px-4 py-3 text-sm outline-none",
           "focus:ring-2 focus:ring-zinc-900/10",
@@ -31,17 +21,17 @@ export default function UnitSelect({ value, onChange, error }) {
         ].join(" ")}
       >
         <option value="" disabled>
-          Elegí una unidad
+          Elegi una unidad
         </option>
 
-        {UNITS.map((u) => (
-          <option key={u} value={u}>
-            {u}
+        {options.map((option) => (
+          <option key={option} value={option}>
+            {option}
           </option>
         ))}
       </select>
 
-      {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
+      {error ? <p className="mt-1 text-xs text-red-600">{error}</p> : null}
     </div>
   );
 }

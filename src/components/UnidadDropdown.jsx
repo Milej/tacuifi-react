@@ -5,15 +5,16 @@ export default function UnidadDropdown({
   label = "Unidades",
   items = [],
   className = "",
+  buttonClassName = "",
+  getItemClassName,
   variant = "popover", // "popover" (desktop) | "inline" (mobile)
-  onNavigate, // para cerrar menú padre cuando navega (mobile)
+  onNavigate, // para cerrar menu padre cuando navega (mobile)
 }) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
 
   const safeItems = (items || []).filter(Boolean);
 
-  // Cerrar al click afuera SOLO si es popover
   useEffect(() => {
     if (variant !== "popover") return;
 
@@ -32,7 +33,6 @@ export default function UnidadDropdown({
     };
   }, [variant]);
 
-  // Si cambia el variant (ej. resize), cerramos
   useEffect(() => {
     setOpen(false);
   }, [variant]);
@@ -43,8 +43,11 @@ export default function UnidadDropdown({
         <button
           type="button"
           onClick={() => setOpen((v) => !v)}
-          className="w-full flex items-center justify-between px-4 py-3 rounded-2xl text-base font-medium
-                     text-zinc-800 hover:bg-emerald-900/5 transition"
+          className={[
+            "w-full flex items-center justify-between px-4 py-3 rounded-2xl text-base font-medium",
+            "text-zinc-800 hover:bg-emerald-900/5 transition",
+            buttonClassName,
+          ].join(" ")}
           aria-expanded={open}
         >
           <span>{label}</span>
@@ -67,13 +70,13 @@ export default function UnidadDropdown({
                     setOpen(false);
                     onNavigate?.();
                   }}
-                  className="block px-4 py-3 rounded-2xl text-base text-zinc-800
-                             hover:bg-emerald-900/5 transition"
+                  className={
+                    getItemClassName?.(it) ??
+                    "block px-4 py-3 rounded-2xl text-base text-zinc-800 hover:bg-emerald-900/5 transition"
+                  }
                 >
                   <div className="font-medium">{it.label}</div>
-                  {it.desc && (
-                    <div className="text-sm text-zinc-600 leading-snug">{it.desc}</div>
-                  )}
+                  {it.desc && <div className="text-sm text-zinc-600 leading-snug">{it.desc}</div>}
                 </a>
               ))}
             </div>
@@ -83,7 +86,6 @@ export default function UnidadDropdown({
     );
   }
 
-  // variant === "popover" (desktop)
   return (
     <div ref={ref} className={`relative ${className}`}>
       <button
@@ -92,6 +94,7 @@ export default function UnidadDropdown({
         className={[
           "px-3 py-2 rounded-xl text-sm transition inline-flex items-center gap-1.5",
           "text-zinc-700 hover:text-emerald-900 hover:bg-emerald-900/5",
+          buttonClassName,
         ].join(" ")}
         aria-haspopup="menu"
         aria-expanded={open}
@@ -122,8 +125,10 @@ export default function UnidadDropdown({
             key={it.href}
             href={it.href}
             onClick={() => setOpen(false)}
-            className="flex flex-col gap-0.5 rounded-xl px-3 py-2 text-sm text-zinc-800
-                       hover:bg-emerald-900/5 hover:text-emerald-900 transition"
+            className={
+              getItemClassName?.(it) ??
+              "flex flex-col gap-0.5 rounded-xl px-3 py-2 text-sm text-zinc-800 hover:bg-emerald-900/5 hover:text-emerald-900 transition"
+            }
             role="menuitem"
           >
             <span className="font-medium">{it.label}</span>

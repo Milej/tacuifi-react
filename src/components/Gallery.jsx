@@ -1,34 +1,14 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Images, ChevronDown, ChevronUp, Loader2 } from "lucide-react";
+import { ChevronDown, ChevronUp, Images, Loader2 } from "lucide-react";
 import SectionTitle from "./SectionTitle";
 import FullscreenViewer from "./FullscreenViewer";
+import { DEFAULT_HOME_CONTENT } from "../content/defaultHomeContent";
+import { getImageAlt, resolveAssetUrl } from "../helpers/siteContent";
 
-const GALLERY_IMAGES = [
-  "1.jpg",
-  "2.jpg",
-  "3.jpg",
-  "4.jpg",
-  "5.jpg",
-  "6.jpg",
-  "7.jpg",
-  "8.jpg",
-  "9.jpg",
-  "10.jpg",
-  "11.jpg",
-  "12.jpg",
-  "13.jpg",
-  "14.jpg",
-  "15.jpg",
-  "16.jpg",
-  "17.jpg",
-  "18.jpg",
-  "19.jpg",
-  "20.jpg",
-];
-
-const PREVIEW_COUNT = 8;
-
-export default function Gallery() {
+export default function Gallery({
+  section = DEFAULT_HOME_CONTENT.gallerySection,
+  items = DEFAULT_HOME_CONTENT.galleryItems,
+}) {
   const sectionRef = useRef(null);
   const [open, setOpen] = useState(false);
   const [initialIndex, setInitialIndex] = useState(0);
@@ -50,22 +30,30 @@ export default function Gallery() {
         root: null,
         rootMargin: "200px 0px",
         threshold: 0.1,
-      },
+      }
     );
 
     io.observe(node);
     return () => io.disconnect();
   }, []);
 
-  const visibleImages = useMemo(() => {
-    return showAll ? GALLERY_IMAGES : GALLERY_IMAGES.slice(0, PREVIEW_COUNT);
-  }, [showAll]);
+  const visibleItems = useMemo(
+    () =>
+      (Array.isArray(items) ? items : [])
+        .filter((item) => item?.visible !== false)
+        .slice()
+        .sort((left, right) => Number(left?.sortOrder ?? 0) - Number(right?.sortOrder ?? 0)),
+    [items]
+  );
+  const previewCount = section?.previewCount || DEFAULT_HOME_CONTENT.gallerySection.previewCount;
+  const visibleImages = useMemo(
+    () => (showAll ? visibleItems : visibleItems.slice(0, previewCount)),
+    [visibleItems, previewCount, showAll]
+  );
+  const remaining = Math.max(0, visibleItems.length - previewCount);
 
-  const remaining = Math.max(0, GALLERY_IMAGES.length - PREVIEW_COUNT);
-
-  const openAt = (i) => {
-    const realIndex = showAll ? i : i;
-    setInitialIndex(realIndex);
+  const openAt = (index) => {
+    setInitialIndex(index);
     setOpen(true);
   };
 
@@ -80,65 +68,64 @@ export default function Gallery() {
 
   return (
     <section id="galeria" ref={sectionRef} className="relative py-14 md:py-16">
-      <SectionTitle
-        eyebrow="Galería"
-        title="Un vistazo al lugar"
-        desc="Tocá cualquier foto para verla en pantalla completa."
-      />
+      <SectionTitle eyebrow={section?.eyebrow} title={section?.title} desc={section?.description} />
 
       {!shouldLoad ? (
-        <div className="mx-auto max-w-6xl px-4 mt-8">
-          <div className="rounded-3xl border border-zinc-200/80 bg-white/75 backdrop-blur-sm shadow-sm p-8 md:p-10">
+        <div className="mx-auto mt-8 max-w-6xl px-4">
+          <div className="rounded-3xl border border-zinc-200/80 bg-white/75 p-8 shadow-sm backdrop-blur-sm md:p-10">
             <div className="flex items-center justify-center gap-3 text-zinc-600">
               <Loader2 className="h-5 w-5 animate-spin" />
-              <p className="text-sm md:text-base">Cargando galería...</p>
+              <p className="text-sm md:text-base">Cargando galeria...</p>
             </div>
           </div>
         </div>
       ) : (
         <>
-          {/* Grid */}
-          <div className="mx-auto max-w-6xl px-4 mt-8 grid grid-cols-2 md:grid-cols-4 gap-3">
-            {visibleImages.map((file, i) => (
+          <div className="mx-auto mt-8 grid max-w-6xl grid-cols-2 gap-3 px-4 md:grid-cols-4">
+            {visibleImages.map((item, index) => {
+              const imageUrl = resolveAssetUrl(item?.image);
+              const imageAlt = getImageAlt(item?.image, `Galeria ${index + 1}`);
+
+              return (
               <button
-                key={file}
-                onClick={() => openAt(i)}
-                className="group relative rounded-3xl overflow-hidden border border-zinc-200 bg-white shadow-sm focus:outline-none"
+                key={item?.id || imageUrl}
+                onClick={() => openAt(index)}
+                className="group relative overflow-hidden rounded-3xl border border-zinc-200 bg-white shadow-sm focus:outline-none"
               >
-                <div className="aspect-square relative">
-                  {!loadedSet.has(file) && <div className="absolute inset-0 animate-pulse bg-zinc-200/80" />}
+                <div className="relative aspect-square">
+                  {!loadedSet.has(imageUrl) ? <div className="absolute inset-0 animate-pulse bg-zinc-200/80" /> : null}
                   <img
-                    src={`/galeria/${file}`}
-                    alt={`Galería ${i + 1}`}
+                    src={imageUrl}
+                    alt={imageAlt}
                     className={`h-full w-full object-cover transition-all duration-300 group-hover:scale-105 ${
-                      loadedSet.has(file) ? "opacity-100" : "opacity-0"
+                      loadedSet.has(imageUrl) ? "opacity-100" : "opacity-0"
                     }`}
                     loading="lazy"
                     decoding="async"
                     fetchPriority="low"
                     sizes="(max-width: 768px) 50vw, 25vw"
-                    onLoad={() => markLoaded(file)}
+                    onLoad={() => markLoaded(imageUrl)}
                   />
                 </div>
 
-                <div className="pointer-events-none absolute inset-0 bg-black/0 group-hover:bg-black/20 transition" />
-                <div className="pointer-events-none absolute inset-0 grid place-items-center opacity-0 group-hover:opacity-100 transition">
+                <div className="pointer-events-none absolute inset-0 bg-black/0 transition group-hover:bg-black/20" />
+                <div className="pointer-events-none absolute inset-0 grid place-items-center opacity-0 transition group-hover:opacity-100">
                   <div className="inline-flex items-center gap-2 rounded-full bg-white/90 px-3 py-1.5 text-sm font-medium text-zinc-900 shadow">
                     <Images className="h-4 w-4" />
                     Ver
                   </div>
                 </div>
               </button>
-            ))}
+              );
+            })}
           </div>
 
-          {/* Botón Ver más / Ver menos */}
-          {GALLERY_IMAGES.length > PREVIEW_COUNT && (
-            <div className="mx-auto max-w-6xl px-4 mt-6 flex justify-center">
+          {visibleItems.length > previewCount ? (
+            <div className="mx-auto mt-6 flex max-w-6xl justify-center px-4">
               <button
                 type="button"
-                onClick={() => setShowAll((v) => !v)}
-                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-2xl text-sm font-semibold border border-zinc-300 bg-white text-zinc-900 hover:bg-zinc-50 transition"
+                onClick={() => setShowAll((value) => !value)}
+                className="inline-flex items-center justify-center gap-2 rounded-2xl border border-zinc-300 bg-white px-5 py-2.5 text-sm font-semibold text-zinc-900 transition hover:bg-zinc-50"
               >
                 {showAll ? (
                   <>
@@ -148,22 +135,21 @@ export default function Gallery() {
                 ) : (
                   <>
                     <ChevronDown className="h-4 w-4" />
-                    Ver más{remaining ? ` (+${remaining})` : ""}
+                    Ver mas{remaining ? ` (+${remaining})` : ""}
                   </>
                 )}
               </button>
             </div>
-          )}
+          ) : null}
 
-          {/* Fullscreen continuo */}
           <FullscreenViewer
             open={open}
             onClose={() => setOpen(false)}
             folder={null}
-            images={GALLERY_IMAGES}
+            images={visibleItems.map((item) => item.image)}
             initialIndex={initialIndex}
-            altBase="Galería"
-            buildSrc={(file) => `/galeria/${file}`}
+            altBase="Galeria"
+            buildSrc={(image) => resolveAssetUrl(image)}
           />
         </>
       )}

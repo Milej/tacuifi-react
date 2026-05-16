@@ -1,16 +1,64 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Menu, X } from "lucide-react";
-import { links, unidadesLinks } from "../config/links";
-import UnidadDropdown from "../components/UnidadDropdown";
+import UnidadDropdown from "./UnidadDropdown";
+import UserMenu from "./UserMenu";
+import { useAuth } from "../hooks/useAuth";
+import { INICIO, LOGIN, REGISTRO } from "../config/rutas";
+import { useSiteContent } from "../context/SiteContentContext";
+import { DEFAULT_HOME_CONTENT } from "../content/defaultHomeContent";
+import { buildHomeNavigation } from "../helpers/siteContent";
+
+function resolveHomeHref(pathname, href) {
+  return pathname === "/" ? href : `/${href}`;
+}
+
+function AuthButtons({ mobile = false, onNavigate }) {
+  return (
+    <>
+      {/* <Link
+        to={LOGIN}
+        onClick={onNavigate}
+        className={
+          mobile
+            ? "block w-full rounded-2xl border border-emerald-900/10 bg-white px-5 py-3 text-center text-base font-semibold"
+            : "rounded-xl border border-emerald-900/10 bg-white/75 px-4 py-2 text-sm font-semibold text-zinc-900 transition hover:bg-white"
+        }
+      >
+        Ingresar
+      </Link>
+      <Link
+        to={REGISTRO}
+        onClick={onNavigate}
+        className={
+          mobile
+            ? "block w-full rounded-2xl bg-emerald-800 px-5 py-3 text-center text-base font-semibold text-white transition hover:bg-emerald-700"
+            : "rounded-xl bg-emerald-800 px-4 py-2 text-sm font-semibold text-white transition shadow-sm hover:bg-emerald-700"
+        }
+      >
+        Registrarme
+      </Link> */}
+    </>
+  );
+}
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [activeHomeHref, setActiveHomeHref] = useState("#inicio");
+  const { user, isAuthenticated, initializing, logout } = useAuth();
+  const { content } = useSiteContent();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const navigation = useMemo(() => buildHomeNavigation(content || DEFAULT_HOME_CONTENT), [content]);
+  const HOME_LINKS = navigation.homeLinks;
+  const unidadesLinks = navigation.unitLinks;
+  const TRACKED_HOME_HREFS = ["#inicio", ...unidadesLinks.map((item) => item.href), ...HOME_LINKS.map((item) => item.href)];
 
   useEffect(() => {
     const onScroll = () => {
       const next = window.scrollY > 10;
-      setScrolled((prev) => (prev === next ? prev : next)); // ✅ evita rerender por cada pixel
+      setScrolled((prev) => (prev === next ? prev : next));
     };
 
     onScroll();
@@ -18,7 +66,47 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Bloquea scroll del body cuando el menú fullscreen está abierto
+  useEffect(() => {
+    if (location.pathname !== "/") {
+      setActiveHomeHref("");
+      return;
+    }
+
+    let rafId = 0;
+
+    const updateActiveSection = () => {
+      const offset = 112;
+      let nextHref = "#inicio";
+
+      TRACKED_HOME_HREFS.forEach((href) => {
+        const section = document.getElementById(href.slice(1));
+        if (!section) return;
+
+        const sectionTop = section.getBoundingClientRect().top + window.scrollY - offset;
+        if (window.scrollY >= sectionTop) nextHref = href;
+      });
+
+      setActiveHomeHref((prev) => (prev === nextHref ? prev : nextHref));
+    };
+
+    const scheduleUpdate = () => {
+      cancelAnimationFrame(rafId);
+      rafId = window.requestAnimationFrame(updateActiveSection);
+    };
+
+    scheduleUpdate();
+    window.addEventListener("scroll", scheduleUpdate, { passive: true });
+    window.addEventListener("resize", scheduleUpdate);
+    window.addEventListener("hashchange", scheduleUpdate);
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      window.removeEventListener("scroll", scheduleUpdate);
+      window.removeEventListener("resize", scheduleUpdate);
+      window.removeEventListener("hashchange", scheduleUpdate);
+    };
+  }, [location.pathname]);
+
   useEffect(() => {
     if (!open) return;
     const prev = document.body.style.overflow;
@@ -28,16 +116,14 @@ export default function Navbar() {
     };
   }, [open]);
 
-  // Cerrar con ESC
   useEffect(() => {
-    const onKeyDown = (e) => {
-      if (e.key === "Escape") setOpen(false);
+    const onKeyDown = (event) => {
+      if (event.key === "Escape") setOpen(false);
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   }, []);
 
-  // Cerrar si pasa a desktop
   useEffect(() => {
     const onResize = () => {
       if (window.innerWidth >= 1024) setOpen(false);
@@ -46,64 +132,112 @@ export default function Navbar() {
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
+  async function handleLogout() {
+    await logout();
+    setOpen(false);
+    navigate(INICIO, { replace: true });
+  }
+
   const Logo = ({ onClick }) => (
-    <a href="#inicio" onClick={onClick} className="flex items-center select-none" aria-label="Ir a inicio">
-      <img src="/logo.png" alt="Tacuifi" className="h-11 md:h-12 w-auto object-contain" />
-    </a>
+    <Link to="/" onClick={onClick} className="flex items-center select-none" aria-label="Ir a inicio">
+      <img src="/logo.png" alt="Tacuifi" className="h-11 w-auto object-contain md:h-12" />
+    </Link>
   );
 
-  const linkBase = "px-3 py-2 rounded-xl text-sm transition flex items-center";
-  const linkIdle = "text-zinc-700 hover:text-emerald-900 hover:bg-emerald-900/5";
-  const cta =
-    "ml-2 px-4 py-2 rounded-xl text-sm font-semibold transition shadow-sm bg-emerald-800 text-white hover:bg-emerald-700";
+  const isHomeActive = (href) => location.pathname === "/" && activeHomeHref === href;
+  const isUnitsActive = unidadesLinks.some((item) => isHomeActive(item.href));
+
+  const linkBase = "flex items-center rounded-xl px-3 py-2 text-sm transition";
+  const linkIdle = "text-zinc-700 hover:bg-emerald-900/5 hover:text-emerald-900";
+  const linkActive = "bg-emerald-900/10 text-emerald-950";
+  const mobileLinkBase = "block rounded-2xl px-4 py-3 text-base font-medium transition";
+  const mobileLinkIdle = "text-zinc-800 hover:bg-emerald-900/5";
+  const mobileLinkActive = "bg-emerald-900/10 text-emerald-950";
+  const getHomeLinkClassName = (href) => [linkBase, isHomeActive(href) ? linkActive : linkIdle].join(" ");
+
+  const getMobileHomeLinkClassName = (href) =>
+    [mobileLinkBase, isHomeActive(href) ? mobileLinkActive : mobileLinkIdle].join(" ");
+
+  const getDesktopUnitItemClassName = (item) =>
+    [
+      "flex flex-col gap-0.5 rounded-xl px-3 py-2 text-sm transition",
+      isHomeActive(item.href)
+        ? "bg-emerald-900/10 text-emerald-950"
+        : "text-zinc-800 hover:bg-emerald-900/5 hover:text-emerald-900",
+    ].join(" ");
+
+  const getMobileUnitItemClassName = (item) =>
+    [
+      "block rounded-2xl px-4 py-3 text-base transition",
+      isHomeActive(item.href)
+        ? "bg-emerald-900/10 text-emerald-950"
+        : "text-zinc-800 hover:bg-emerald-900/5",
+    ].join(" ");
 
   return (
     <>
       <header
         className={[
-          "fixed top-0 left-0 right-0 z-50",
-          // ✅ NO transition-all (evita animar bordes/medidas)
-          "transition-colors duration-200",
-          // ✅ borde SIEMPRE (no cambia el alto). Solo cambia el color.
-          "border-b",
-          scrolled ? "bg-[#fbf7ee]/95 backdrop-blur border-emerald-900/10" : "bg-transparent border-transparent",
+          "fixed left-0 right-0 top-0 z-50 border-b transition-colors duration-200",
+          scrolled ? "border-emerald-900/10 bg-[#fbf7ee]/95 backdrop-blur" : "border-transparent bg-transparent",
         ].join(" ")}
       >
-        <div className="w-full">
-          <div className="mx-auto max-w-6xl px-4 md:px-6">
-            <div className="h-16 flex items-center justify-between">
-              <Logo onClick={() => setOpen(false)} />
+        <div className="mx-auto max-w-6xl px-4 md:px-6">
+          <div className="flex h-16 items-center justify-between gap-4">
+            <Logo onClick={() => setOpen(false)} />
 
-              {/* Desktop */}
-              <nav className="hidden lg:flex items-center gap-1">
-                <a href="#inicio" className={`${linkBase} ${linkIdle}`}>
-                  Inicio
+            <nav className="hidden items-center gap-1 lg:flex">
+              <a
+                href={resolveHomeHref(location.pathname, "#inicio")}
+                onClick={() => setActiveHomeHref("#inicio")}
+                className={getHomeLinkClassName("#inicio")}
+              >
+                Inicio
+              </a>
+              {unidadesLinks.length > 0 ? (
+                <UnidadDropdown
+                  label="Unidades"
+                  items={unidadesLinks.map((item) => ({
+                    ...item,
+                    href: resolveHomeHref(location.pathname, item.href),
+                  }))}
+                  buttonClassName={isUnitsActive ? linkActive : ""}
+                  getItemClassName={(item) =>
+                    getDesktopUnitItemClassName({
+                      ...item,
+                      href: item.href.replace(/^\//, ""),
+                    })
+                  }
+                />
+              ) : null}
+              {HOME_LINKS.map((item) => (
+                <a
+                  key={item.href}
+                  href={resolveHomeHref(location.pathname, item.href)}
+                  onClick={() => setActiveHomeHref(item.href)}
+                  className={getHomeLinkClassName(item.href)}
+                >
+                  {item.label}
                 </a>
+              ))}
+            </nav>
 
-                <UnidadDropdown label="Unidades" items={unidadesLinks} />
+            <div className="hidden items-center gap-2 lg:flex">
+              {initializing ? (
+                <div className="h-11 w-48 animate-pulse rounded-2xl border border-emerald-900/10 bg-white/60" />
+              ) : !isAuthenticated ? (
+                <AuthButtons />
+              ) : (
+                <UserMenu user={user} onLogout={handleLogout} />
+              )}
+            </div>
 
-                {links
-                  .filter((l) => l.href !== "#inicio")
-                  .map((l) => (
-                    <a key={l.href} href={l.href} className={`${linkBase} ${linkIdle}`}>
-                      {l.label}
-                    </a>
-                  ))}
-
-                <a href="#contacto" className={cta}>
-                  Consultar
-                </a>
-              </nav>
-
-              {/* Mobile toggle */}
+            <div className="flex items-center gap-2 lg:hidden">
+              {isAuthenticated && !initializing ? <UserMenu user={user} onLogout={handleLogout} compact /> : null}
               <button
-                className={[
-                  "lg:hidden inline-flex items-center justify-center h-10 w-10 rounded-xl",
-                  "border border-emerald-900/10 bg-[#fffaf0]/80 backdrop-blur",
-                  "hover:bg-[#fffaf0] transition",
-                ].join(" ")}
+                className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-emerald-900/10 bg-[#fffaf0]/80 backdrop-blur transition hover:bg-[#fffaf0]"
                 onClick={() => setOpen(true)}
-                aria-label="Abrir menú"
+                aria-label="Abrir menu"
                 aria-expanded={open}
               >
                 <Menu className="h-5 w-5" />
@@ -113,89 +247,123 @@ export default function Navbar() {
         </div>
       </header>
 
-      {/* FULLSCREEN MOBILE MENU */}
       <div
         className={[
-          "lg:hidden fixed inset-0 z-[60]",
-          "transition-opacity duration-200",
-          open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none",
+          "fixed inset-0 z-[60] transition-opacity duration-200 lg:hidden",
+          open ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0",
         ].join(" ")}
         aria-hidden={!open}
       >
-        {/* Backdrop */}
         <button
-          className="absolute inset-0 w-full h-full bg-black/35 backdrop-blur-[2px]"
+          className="absolute inset-0 h-full w-full bg-black/35 backdrop-blur-[2px]"
           onClick={() => setOpen(false)}
-          aria-label="Cerrar menú (fondo)"
+          aria-label="Cerrar menu"
         />
 
-        {/* Panel full screen */}
-        <div className="absolute inset-0 bg-[#fbf7ee] flex flex-col" role="dialog" aria-modal="true">
-          {/* Top bar */}
-          <div className="h-16 px-4 flex items-center justify-between border-b border-emerald-900/10">
+        <div className="absolute inset-0 flex flex-col bg-[#fbf7ee]" role="dialog" aria-modal="true">
+          <div className="flex h-16 items-center justify-between border-b border-emerald-900/10 px-4">
             <Logo onClick={() => setOpen(false)} />
-
             <button
-              className="inline-flex items-center justify-center h-10 w-10 rounded-xl border border-emerald-900/10 bg-white/70 hover:bg-white transition"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-emerald-900/10 bg-white/70 transition hover:bg-white"
               onClick={() => setOpen(false)}
-              aria-label="Cerrar menú"
+              aria-label="Cerrar menu"
             >
               <X className="h-5 w-5" />
             </button>
           </div>
 
-          {/* Content */}
           <div className="flex-1 overflow-y-auto px-4 py-5">
-            <div className="max-w-md mx-auto">
+            <div className="mx-auto max-w-md">
               <a
-                href="#inicio"
-                onClick={() => setOpen(false)}
-                className="block px-4 py-3 rounded-2xl text-base font-medium text-zinc-800 hover:bg-emerald-900/5 transition"
+                href={resolveHomeHref(location.pathname, "#inicio")}
+                onClick={() => {
+                  setActiveHomeHref("#inicio");
+                  setOpen(false);
+                }}
+                className={getMobileHomeLinkClassName("#inicio")}
               >
                 Inicio
               </a>
-
               <div className="mt-2">
-                <UnidadDropdown
-                  variant="inline"
-                  label="Unidades"
-                  items={unidadesLinks}
-                  onNavigate={() => setOpen(false)}
-                />
+                {unidadesLinks.length > 0 ? (
+                  <UnidadDropdown
+                    variant="inline"
+                    label="Unidades"
+                    items={unidadesLinks.map((item) => ({
+                      ...item,
+                      href: resolveHomeHref(location.pathname, item.href),
+                    }))}
+                    buttonClassName={isUnitsActive ? mobileLinkActive : ""}
+                    getItemClassName={(item) =>
+                      getMobileUnitItemClassName({
+                        ...item,
+                        href: item.href.replace(/^\//, ""),
+                      })
+                    }
+                    onNavigate={() => setOpen(false)}
+                  />
+                ) : null}
               </div>
-
               <div className="mt-2 space-y-1">
-                {links
-                  .filter((l) => l.href !== "#inicio")
-                  .map((l) => (
-                    <a
-                      key={l.href}
-                      href={l.href}
-                      onClick={() => setOpen(false)}
-                      className="block px-4 py-3 rounded-2xl text-base font-medium text-zinc-800 hover:bg-emerald-900/5 transition"
-                    >
-                      {l.label}
-                    </a>
-                  ))}
+                {HOME_LINKS.map((item) => (
+                  <a
+                    key={item.href}
+                    href={resolveHomeHref(location.pathname, item.href)}
+                    onClick={() => {
+                      setActiveHomeHref(item.href);
+                      setOpen(false);
+                    }}
+                    className={getMobileHomeLinkClassName(item.href)}
+                  >
+                    {item.label}
+                  </a>
+                ))}
               </div>
 
-              <div className="mt-6">
-                <a
-                  href="#contacto"
-                  onClick={() => setOpen(false)}
-                  className="block w-full text-center px-5 py-3 rounded-2xl text-base font-semibold bg-emerald-800 text-white hover:bg-emerald-700 transition"
-                >
-                  Consultar
-                </a>
-
-                <p className="mt-3 text-sm text-zinc-600 leading-relaxed">
-                  Contanos fechas, cantidad de personas y qué unidad te interesa. Te respondemos rápido.
-                </p>
+              <div className="mt-6 space-y-2">
+                {initializing ? (
+                  <div className="h-24 animate-pulse rounded-3xl border border-emerald-900/10 bg-white/60" />
+                ) : !isAuthenticated ? (
+                  <AuthButtons mobile onNavigate={() => setOpen(false)} />
+                ) : (
+                  <div className="rounded-3xl border border-emerald-900/10 bg-white/80 p-4 shadow-sm">
+                    <p className="text-sm font-semibold text-zinc-900">{user?.profile?.firstName || user?.email || "Cuenta activa"}</p>
+                    <p className="mt-1 text-xs text-zinc-500">Acceso rapido a tu cuenta</p>
+                    <div className="mt-4 space-y-2">
+                      <Link
+                        to="/mi-cuenta"
+                        onClick={() => setOpen(false)}
+                        className="block rounded-2xl px-4 py-3 text-sm font-medium text-zinc-800 transition hover:bg-emerald-900/5"
+                      >
+                        Mi cuenta
+                      </Link>
+                      <Link
+                        to="/mi-cuenta/perfil"
+                        onClick={() => setOpen(false)}
+                        className="block rounded-2xl px-4 py-3 text-sm font-medium text-zinc-800 transition hover:bg-emerald-900/5"
+                      >
+                        Editar perfil
+                      </Link>
+                      <Link
+                        to="/mi-cuenta/reservas"
+                        onClick={() => setOpen(false)}
+                        className="block rounded-2xl px-4 py-3 text-sm font-medium text-zinc-800 transition hover:bg-emerald-900/5"
+                      >
+                        Mis reservas
+                      </Link>
+                      <button
+                        type="button"
+                        onClick={handleLogout}
+                        className="block w-full rounded-2xl px-4 py-3 text-left text-sm font-medium text-rose-700 transition hover:bg-rose-50"
+                      >
+                        Cerrar sesion
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
-
-          <div className="h-4" />
         </div>
       </div>
     </>

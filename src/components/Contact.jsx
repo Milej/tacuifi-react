@@ -1,20 +1,18 @@
 import { useEffect, useMemo, useState } from "react";
-import { useForm, Controller } from "react-hook-form";
-import Swal from "sweetalert2";
-
-import { Mail, Send, MessageCircle, X } from "lucide-react";
+import { Controller, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Mail, MessageCircle, Send, X } from "lucide-react";
 import SectionTitle from "./SectionTitle";
 import ContactField from "./ContactField";
 import ContactTextarea from "./ContactTextarea";
-
 import UnitSelect from "./UnitSelect";
 import DateRangeField from "./DateRangeField";
 import GuestsPicker from "./GuestsPicker";
-
-// 👇 service frontend
 import { enviarConsultaMail } from "../services/contact.service.js";
+import { notifyError, notifyInfo, notifySuccess, notifyWarning } from "../helpers/notifications";
+import { contactSchema } from "../validators/contactSchemas";
+import { DEFAULT_HOME_CONTENT } from "../content/defaultHomeContent";
 
-// Convierte YYYY-MM-DD -> DD/MM/AAAA (Argentina)
 function formatAR(dateStr) {
   if (!dateStr) return "";
   const [y, m, d] = dateStr.split("-");
@@ -31,34 +29,28 @@ function calcNoches(desdeISO, hastaISO) {
 
   const [y1, m1, d1] = desdeISO.split("-").map(Number);
   const [y2, m2, d2] = hastaISO.split("-").map(Number);
+  const from = new Date(y1, m1 - 1, d1, 12, 0, 0, 0);
+  const to = new Date(y2, m2 - 1, d2, 12, 0, 0, 0);
 
-  // mediodía local para evitar temas de DST/horas
-  const a = new Date(y1, m1 - 1, d1, 12, 0, 0, 0);
-  const b = new Date(y2, m2 - 1, d2, 12, 0, 0, 0);
+  if (Number.isNaN(from.getTime()) || Number.isNaN(to.getTime())) return null;
 
-  if (Number.isNaN(a.getTime()) || Number.isNaN(b.getTime())) return null;
-
-  const diffDays = Math.round((b - a) / 86400000);
+  const diffDays = Math.round((to - from) / 86400000);
   if (diffDays <= 0) return null;
 
-  return diffDays; // noches = diferencia en días
+  return diffDays;
 }
 
-export default function Contact() {
-  const phoneE164 = "5493546402842";
-  const emailSubject = "Consulta de disponibilidad - Cabañas Tacuifi";
+export default function Contact({
+  content = DEFAULT_HOME_CONTENT.contactSection,
+  accommodations = DEFAULT_HOME_CONTENT.accommodations,
+}) {
+  const phoneE164 = content?.whatsappPhone || DEFAULT_HOME_CONTENT.contactSection.whatsappPhone;
+  const emailSubject = content?.emailSubject || DEFAULT_HOME_CONTENT.contactSection.emailSubject;
+  const unitOptions = useMemo(() => accommodations.map((item) => item.title), [accommodations]);
 
   const [showChannelPick, setShowChannelPick] = useState(false);
-
-  // Nota editable del usuario (persistente, no se pisa nunca)
   const [userNote, setUserNote] = useState("");
-
-  // estado envío email (sin abrir mail app)
   const [sendingMail, setSendingMail] = useState(false);
-  const [mailOk, setMailOk] = useState(false);
-  const [mailErr, setMailErr] = useState("");
-
-  // si vino prefill desde Units, lo mantenemos tras limpiar por email
   const [hadPrefill, setHadPrefill] = useState(false);
 
   const {
@@ -72,6 +64,7 @@ export default function Contact() {
     formState: { errors, isSubmitting },
   } = useForm({
     mode: "onSubmit",
+    resolver: zodResolver(contactSchema),
     defaultValues: {
       nombre: "",
       email: "",
@@ -83,60 +76,49 @@ export default function Contact() {
     },
   });
 
-  // -----------------------------
-  // Watchers (lo que arma el header)
-  // -----------------------------
   const unidad = watch("unidad");
   const nombre = watch("nombre");
   const fechas = watch("fechas");
   const personas = watch("personas");
+  const dateRangeError = errors.fechas?.desde?.message || errors.fechas?.hasta?.message || errors.fechas?.message;
+  const guestError = errors.personas?.adultos?.message || errors.personas?.menores?.message || errors.personas?.message;
 
-  // -----------------------------
-  // Header autogenerado (SIEMPRE se recalcula con campos)
-  // -----------------------------
   const autoHeader = useMemo(() => {
     const desdeRaw = fechas?.desde || "";
     const hastaRaw = fechas?.hasta || "";
-
     const desde = formatAR(desdeRaw);
     const hasta = formatAR(hastaRaw);
-
     const adultos = Number(personas?.adultos ?? 1);
     const menores = Number(personas?.menores ?? 0);
 
     const lines = [];
-    lines.push("Hola! Quiero consultar disponibilidad en Cabañas Tacuifi.");
+    lines.push("Hola. Quiero consultar disponibilidad en Cabanas Tacuifi.");
     lines.push("");
 
-    if (unidad) lines.push(`🏡 Unidad: ${unidad}`);
-    if (nombre) lines.push(`👤 Nombre: ${nombre}`);
+    if (unidad) lines.push(`Unidad: ${unidad}`);
+    if (nombre) lines.push(`Nombre: ${nombre}`);
 
     if (desde || hasta) {
       const rango = [desde, hasta].filter(Boolean).join(" al ");
-
       const noches = calcNoches(desdeRaw, hastaRaw);
       const nochesTxt = noches ? ` (${noches} noche${noches === 1 ? "" : "s"})` : "";
-
-      lines.push(`📅 Fechas: ${rango}${nochesTxt}`);
+      lines.push(`Fechas: ${rango}${nochesTxt}`);
     }
 
-    let ppl = `👥 Personas: ${adultos} adulto${adultos === 1 ? "" : "s"}`;
-    if (menores > 0) ppl += ` + ${menores} menor${menores === 1 ? "" : "es"}`;
-    lines.push(ppl);
+    let peopleLine = `Personas: ${adultos} adulto${adultos === 1 ? "" : "s"}`;
+    if (menores > 0) peopleLine += ` + ${menores} menor${menores === 1 ? "" : "es"}`;
+    lines.push(peopleLine);
 
     return lines.join("\n").trim();
   }, [unidad, nombre, fechas, personas]);
 
-  // Mensaje final (lo visible en el textarea y lo que se envía)
   const fullMessage = useMemo(() => {
     const note = String(userNote || "").trim();
     return note ? `${autoHeader}\n\n${note}` : `${autoHeader}\n\n`;
   }, [autoHeader, userNote]);
 
-  // ✅ lo que se envía por WA/Email (sin emojis)
   const sendMessage = useMemo(() => stripEmojis(fullMessage), [fullMessage]);
 
-  // Mantener RHF “mensaje” sincronizado (sin ensuciar)
   useEffect(() => {
     setValue("mensaje", fullMessage, {
       shouldValidate: false,
@@ -144,10 +126,6 @@ export default function Contact() {
     });
   }, [fullMessage, setValue]);
 
-  // -----------------------------
-  // Prefill desde Units (sessionStorage + evento)
-  // -----------------------------
-  // adentro del useEffect de prefill, reemplazá applyPrefill por este:
   useEffect(() => {
     const addDays = (dateStr, days) => {
       if (!dateStr) return "";
@@ -184,30 +162,24 @@ export default function Contact() {
           setHadPrefill(true);
         }
 
-        // ✅ FECHAS: soporta data.fechasPrefill o data.fechas (por si cambiaste el nombre)
         const fechasIn = data?.fechasPrefill || data?.fechas || null;
+        if (!fechasIn) return;
 
-        if (fechasIn) {
-          const desdeRaw = String(fechasIn?.desde || "").trim();
-          const hastaRaw = String(fechasIn?.hasta || "").trim();
+        const desdeRaw = String(fechasIn?.desde || "").trim();
+        const hastaRaw = String(fechasIn?.hasta || "").trim();
+        const desdeOk = isValidISODate(desdeRaw) ? desdeRaw : "";
+        let hastaOk = isValidISODate(hastaRaw) ? hastaRaw : "";
 
-          const desdeOk = isValidISODate(desdeRaw) ? desdeRaw : "";
-          let hastaOk = isValidISODate(hastaRaw) ? hastaRaw : "";
+        if (desdeOk && !hastaOk) hastaOk = addDays(desdeOk, 1);
+        if (desdeOk && hastaOk && hastaOk <= desdeOk) hastaOk = addDays(desdeOk, 1);
 
-          // si viene solo "desde", generamos "hasta" mínimo
-          if (desdeOk && !hastaOk) hastaOk = addDays(desdeOk, 1);
-
-          // si hasta es menor/equivale, corregimos
-          if (desdeOk && hastaOk && hastaOk <= desdeOk) {
-            hastaOk = addDays(desdeOk, 1);
-          }
-
-          if (desdeOk || hastaOk) {
-            setValue("fechas", { desde: desdeOk, hasta: hastaOk }, { shouldValidate: false, shouldDirty: false });
-            setHadPrefill(true);
-          }
+        if (desdeOk || hastaOk) {
+          setValue("fechas", { desde: desdeOk, hasta: hastaOk }, { shouldValidate: false, shouldDirty: false });
+          setHadPrefill(true);
         }
-      } catch (e) {}
+      } catch {
+        return;
+      }
     };
 
     applyPrefill();
@@ -220,31 +192,28 @@ export default function Contact() {
     };
   }, [setValue]);
 
-  // -----------------------------
-  // Links
-  // -----------------------------
   const waLink = useMemo(
     () => `https://wa.me/${phoneE164}?text=${encodeURIComponent(sendMessage)}`,
     [phoneE164, sendMessage],
   );
 
-  // 1) Submit: valida y abre selector
   const onPrimarySubmit = handleSubmit(() => {
-    setMailOk(false);
-    setMailErr("");
     setShowChannelPick(true);
   });
 
-  // 2) Acciones finales
   const sendWhatsApp = () => {
     setShowChannelPick(false);
-    window.open(waLink, "_blank");
+    const popup = window.open(waLink, "_blank", "noopener,noreferrer");
+
+    if (popup) {
+      notifyInfo("WhatsApp listo", "Abrimos tu mensaje en una pestana nueva para que lo revises antes de enviarlo.");
+      return;
+    }
+
+    notifyWarning("No pudimos abrir WhatsApp", "Tu navegador bloqueo la pestana. Habilita popups y volve a intentar.");
   };
 
   const sendEmail = async () => {
-    setMailOk(false);
-    setMailErr("");
-
     try {
       setSendingMail(true);
 
@@ -253,28 +222,13 @@ export default function Contact() {
         name: getValues("nombre"),
         email: getValues("email"),
         phone: getValues("telefono"),
-        message: sendMessage, // SIN emojis
+        message: sendMessage,
       });
 
-      setMailOk(true);
-
-      // ✅ SweetAlert OK
-      await Swal.fire({
-        icon: "success",
-        title: "Consulta enviada",
-        text: "Te respondemos a la brevedad.",
-        confirmButtonText: "Listo",
-        confirmButtonColor: "#18181b", // zinc-900
-      });
-
-      // ✅ cerrar modal
+      await notifySuccess("Consulta enviada", "Te respondemos a la brevedad.");
       setShowChannelPick(false);
-
-      // ✅ limpiar nota manual
       setUserNote("");
 
-      // ✅ resetear formulario SOLO cuando EMAIL sale OK
-      // si venía prefill, mantenemos unidad/personas
       const keepUnidad = hadPrefill ? getValues("unidad") || "" : "";
       const keepPersonas = hadPrefill
         ? getValues("personas") || { adultos: 1, menores: 0 }
@@ -293,17 +247,8 @@ export default function Contact() {
         { keepErrors: false, keepDirty: false, keepTouched: false },
       );
     } catch (err) {
-      const msg = err?.message || "No se pudo enviar el email.";
-      setMailErr(msg);
-
-      // ❌ SweetAlert ERROR
-      await Swal.fire({
-        icon: "error",
-        title: "No se pudo enviar",
-        text: msg,
-        confirmButtonText: "Cerrar",
-        confirmButtonColor: "#18181b",
-      });
+      const message = err?.message || "No se pudo enviar el email.";
+      notifyError("No se pudo enviar", message);
     } finally {
       setSendingMail(false);
     }
@@ -311,185 +256,186 @@ export default function Contact() {
 
   return (
     <section className="relative py-14 md:py-16">
-      <SectionTitle
-        eyebrow="Contacto"
-        title="Consultas y reservas"
-        desc="Completá el formoulario y envianos tu consulta."
-      />
+      <SectionTitle eyebrow={content?.eyebrow} title={content?.title} desc={content?.description} />
 
-      <div className="mx-auto max-w-6xl px-4 mt-8">
-        <div className="relative rounded-3xl border border-zinc-100/80 bg-white/95 shadow-xl shadow-zinc-950/10 p-6 md:p-7">
-          <p className="font-semibold text-zinc-900">Consulta rápida</p>
-          <p className="text-sm text-zinc-600 mt-1">Te pedimos lo mínimo para responderte rápido.</p>
+      <div className="mx-auto mt-8 max-w-6xl px-4">
+        <div className="relative rounded-3xl border border-zinc-100/80 bg-white/95 p-6 shadow-xl shadow-zinc-950/10 md:p-7 lg:px-8">
+          <p className="font-semibold text-zinc-900">Consulta rapida</p>
+          <p className="mt-1 text-sm text-zinc-600">Te pedimos lo minimo para responderte rapido.</p>
 
           <form className="mt-5 space-y-4" onSubmit={onPrimarySubmit}>
-            <ContactField
-              label="Nombre"
-              placeholder="Tu nombre"
-              error={errors.nombre?.message}
-              register={register("nombre", {
-                required: "Decinos tu nombre",
-                minLength: { value: 2, message: "Mínimo 2 caracteres" },
-                maxLength: { value: 60, message: "Máximo 60 caracteres" },
-                validate: (v) => (String(v || "").trim().length >= 2 ? true : "Decinos tu nombre"),
-              })}
-            />
+            <div className="grid gap-4 md:grid-cols-2">
+              <ContactField
+                label="Nombre"
+                placeholder="Tu nombre"
+                error={errors.nombre?.message}
+                register={register("nombre", {
+                  required: "Decinos tu nombre",
+                  minLength: { value: 2, message: "Minimo 2 caracteres" },
+                  maxLength: { value: 60, message: "Maximo 60 caracteres" },
+                  validate: (value) => (String(value || "").trim().length >= 2 ? true : "Decinos tu nombre"),
+                })}
+              />
 
-            <ContactField
-              label="Email"
-              type="email"
-              placeholder="tuemail@dominio.com"
-              error={errors.email?.message}
-              register={register("email", {
-                required: "Decinos tu email",
-                pattern: {
-                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                  message: "Ingresá un email válido",
-                },
-              })}
-            />
+              <ContactField
+                label="Email"
+                type="email"
+                placeholder="tuemail@dominio.com"
+                error={errors.email?.message}
+                register={register("email", {
+                  required: "Decinos tu email",
+                  pattern: {
+                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                    message: "Ingresa un email valido",
+                  },
+                })}
+              />
 
-            <ContactField
-              label="Teléfono"
-              type="tel"
-              placeholder="+54 9 3546 123456"
-              error={errors.telefono?.message}
-              register={register("telefono", {
-                required: "Decinos tu teléfono",
-                minLength: { value: 8, message: "Mínimo 8 caracteres" },
-                maxLength: { value: 30, message: "Máximo 30 caracteres" },
-                validate: (v) =>
-                  /^[0-9+()\-\s]+$/.test(String(v || "").trim())
-                    ? true
-                    : "Usá solo números, espacios y símbolos + - ( )",
-              })}
-            />
+              <ContactField
+                label="Telefono"
+                placeholder="+54 9 3546 123456"
+                type="tel"
+                error={errors.telefono?.message}
+                register={register("telefono", {
+                  required: "Decinos tu telefono",
+                  minLength: { value: 8, message: "Minimo 8 caracteres" },
+                  maxLength: { value: 30, message: "Maximo 30 caracteres" },
+                  validate: (value) =>
+                    /^[0-9+()\-\s]+$/.test(String(value || "").trim())
+                      ? true
+                      : "Usa solo numeros, espacios y simbolos + - ( )",
+                })}
+              />
 
-            {/* ✅ Unidad */}
-            <Controller
-              name="unidad"
-              control={control}
-              rules={{
-                validate: (v) => (String(v || "").trim().length >= 2 ? true : "Seleccioná una unidad"),
-              }}
-              render={({ field }) => (
-                <UnitSelect value={field.value} onChange={field.onChange} error={errors.unidad?.message} />
-              )}
-            />
+              <Controller
+                name="unidad"
+                control={control}
+                rules={{
+                  validate: (value) => (String(value || "").trim().length >= 2 ? true : "Selecciona una unidad"),
+                }}
+                render={({ field }) => (
+                  <UnitSelect
+                    value={field.value}
+                    onChange={field.onChange}
+                    error={errors.unidad?.message}
+                    options={unitOptions}
+                  />
+                )}
+              />
 
-            {/* ✅ Fechas */}
-            <Controller
-              name="fechas"
-              control={control}
-              rules={{
-                validate: (v) => {
-                  const d = v?.desde || "";
-                  const h = v?.hasta || "";
-                  if (!d || !h) return "Seleccioná fecha de entrada y salida";
-                  if (h < d) return "La salida no puede ser antes que la entrada";
-                  return true;
-                },
-              }}
-              render={({ field }) => (
-                <DateRangeField value={field.value} onChange={field.onChange} error={errors.fechas?.message} />
-              )}
-            />
+              <Controller
+                name="fechas"
+                control={control}
+                rules={{
+                  validate: (value) => {
+                    const from = value?.desde || "";
+                    const to = value?.hasta || "";
+                    if (!from || !to) return "Selecciona fecha de entrada y salida";
+                    if (to < from) return "La salida no puede ser antes que la entrada";
+                    return true;
+                  },
+                }}
+                render={({ field }) => (
+                  <DateRangeField value={field.value} onChange={field.onChange} error={dateRangeError} />
+                )}
+              />
 
-            {/* ✅ Personas */}
-            <Controller
-              name="personas"
-              control={control}
-              rules={{
-                validate: (v) => {
-                  const a = Number(v?.adultos ?? 0);
-                  const m = Number(v?.menores ?? 0);
-                  if (!Number.isFinite(a) || a < 1) return "Indicá al menos 1 adulto";
-                  if (!Number.isFinite(m) || m < 0) return "Menores inválido";
-                  if (a + m > 20) return "Máximo 20 personas (si son más, escribinos el detalle)";
-                  return true;
-                },
-              }}
-              render={({ field }) => (
-                <GuestsPicker value={field.value} onChange={field.onChange} error={errors.personas?.message} />
-              )}
-            />
+              <Controller
+                name="personas"
+                control={control}
+                rules={{
+                  validate: (value) => {
+                    const adults = Number(value?.adultos ?? 0);
+                    const children = Number(value?.menores ?? 0);
+                    if (!Number.isFinite(adults) || adults < 1) return "Indica al menos 1 adulto";
+                    if (!Number.isFinite(children) || children < 0) return "Cantidad de menores invalida";
+                    if (adults + children > 20) return "Maximo 20 personas. Si son mas, escribinos el detalle.";
+                    return true;
+                  },
+                }}
+                render={({ field }) => (
+                  <GuestsPicker value={field.value} onChange={field.onChange} error={guestError} />
+                )}
+              />
 
-            {/* ✅ Mensaje */}
-            <Controller
-              name="mensaje"
-              control={control}
-              render={({ field }) => (
-                <ContactTextarea
-                  label="Mensaje"
-                  placeholder="El mensaje se arma solo. Escribí tus detalles abajo."
-                  error={errors.mensaje?.message}
-                  rows={7}
-                  name={field.name}
-                  onBlur={field.onBlur}
-                  inputRef={field.ref}
-                  value={field.value || ""}
-                  onChange={(e) => {
-                    const v = e.target.value || "";
+              <div className="md:col-span-2">
+                <Controller
+                  name="mensaje"
+                  control={control}
+                  render={({ field }) => (
+                    <ContactTextarea
+                      label="Mensaje"
+                      placeholder="El mensaje se arma solo. Escribi tus detalles abajo."
+                      error={errors.mensaje?.message}
+                      rows={5}
+                      name={field.name}
+                      onBlur={field.onBlur}
+                      inputRef={field.ref}
+                      value={field.value || ""}
+                      onChange={(event) => {
+                        const nextValue = event.target.value || "";
+                        const auto = autoHeader.trim();
 
-                    const auto = autoHeader.trim();
-                    if (v.startsWith(auto)) {
-                      const rest = v.slice(auto.length).trimStart();
-                      setUserNote(rest);
-                    } else {
-                      setUserNote(v);
-                    }
+                        if (nextValue.startsWith(auto)) {
+                          setUserNote(nextValue.slice(auto.length).trimStart());
+                        } else {
+                          setUserNote(nextValue);
+                        }
 
-                    field.onChange(v);
-                  }}
+                        field.onChange(nextValue);
+                      }}
+                    />
+                  )}
                 />
-              )}
-            />
+              </div>
+            </div>
 
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="inline-flex items-center justify-center gap-2 w-full px-5 py-3 rounded-2xl bg-zinc-900 text-white font-semibold text-sm hover:bg-zinc-800 transition disabled:opacity-60 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-zinc-900/20"
-            >
-              <Send className="h-4 w-4" />
-              Enviar consulta
-            </button>
+            <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+              <p className="text-[11px] leading-relaxed text-zinc-500 md:max-w-sm">
+                Al enviar, elegis si queres mandarlo por WhatsApp o por email.
+              </p>
 
-            <p className="text-[11px] text-zinc-500 leading-relaxed">
-              Al enviar, elegís si lo mandás por WhatsApp o Email.
-            </p>
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-emerald-700 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-600 disabled:cursor-not-allowed disabled:opacity-60 focus:outline-none focus:ring-2 focus:ring-emerald-900/20 md:w-auto md:min-w-[220px]"
+              >
+                <Send className="h-4 w-4" />
+                Enviar consulta
+              </button>
+            </div>
           </form>
 
-          {/* Selector de canal */}
-          {showChannelPick && (
+          {showChannelPick ? (
             <div
-              className="absolute inset-0 rounded-3xl bg-black/30 backdrop-blur-[2px] p-3 md:p-4 grid place-items-center"
+              className="absolute inset-0 grid place-items-center rounded-3xl bg-black/30 p-3 backdrop-blur-[2px] md:p-4"
               onClick={() => setShowChannelPick(false)}
             >
               <div
-                className="w-full max-w-md rounded-3xl border border-zinc-200 bg-white shadow-lg p-5"
-                onClick={(e) => e.stopPropagation()}
+                className="w-full max-w-md rounded-3xl border border-zinc-200 bg-white p-5 shadow-lg"
+                onClick={(event) => event.stopPropagation()}
               >
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <p className="font-semibold text-zinc-900">¿Cómo querés enviar?</p>
-                    <p className="text-sm text-zinc-600 mt-1">Usamos el mismo mensaje del formulario.</p>
+                    <p className="font-semibold text-zinc-900">Como queres enviarlo?</p>
+                    <p className="mt-1 text-sm text-zinc-600">Usamos el mismo mensaje del formulario.</p>
                   </div>
 
                   <button
                     type="button"
                     onClick={() => setShowChannelPick(false)}
-                    className="h-10 w-10 rounded-2xl border border-zinc-200 bg-white hover:bg-zinc-50 grid place-items-center focus:outline-none focus:ring-2 focus:ring-zinc-900/10"
+                    className="grid h-10 w-10 place-items-center rounded-2xl border border-zinc-200 bg-white hover:bg-zinc-50 focus:outline-none focus:ring-2 focus:ring-zinc-900/10"
                     aria-label="Cerrar"
                   >
                     <X className="h-5 w-5 text-zinc-700" />
                   </button>
                 </div>
 
-                <div className="mt-4 grid sm:grid-cols-2 gap-3">
+                <div className="mt-4 grid gap-3 sm:grid-cols-2">
                   <button
                     type="button"
                     onClick={sendWhatsApp}
-                    className="inline-flex items-center justify-center gap-2 w-full px-5 py-3 rounded-2xl bg-emerald-800 text-white font-semibold text-sm hover:bg-emerald-700 transition focus:outline-none focus:ring-2 focus:ring-emerald-900/20"
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-emerald-800 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-900/20"
                   >
                     <MessageCircle className="h-5 w-5" />
                     WhatsApp
@@ -499,19 +445,19 @@ export default function Contact() {
                     type="button"
                     onClick={sendEmail}
                     disabled={sendingMail}
-                    className="inline-flex items-center justify-center gap-2 w-full px-5 py-3 rounded-2xl bg-zinc-900 text-white font-semibold text-sm hover:bg-zinc-800 transition focus:outline-none focus:ring-2 focus:ring-zinc-900/20 disabled:opacity-60 disabled:cursor-not-allowed"
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-zinc-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-zinc-900/20 disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     <Mail className="h-5 w-5" />
                     {sendingMail ? "Enviando..." : "Email"}
                   </button>
                 </div>
 
-                <p className="mt-3 text-[11px] text-zinc-500 leading-relaxed">
-                  WhatsApp abre una pestaña nueva. Email se envía desde la web.
+                <p className="mt-3 text-[11px] leading-relaxed text-zinc-500">
+                  WhatsApp abre una pestana nueva. El email se envia desde la web.
                 </p>
               </div>
             </div>
-          )}
+          ) : null}
         </div>
       </div>
     </section>

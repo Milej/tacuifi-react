@@ -1,82 +1,46 @@
-import { BadgePercent, CalendarDays, Sparkles, ArrowRight } from "lucide-react";
+import { ArrowRight, BadgePercent, CalendarDays, Sparkles } from "lucide-react";
 import SectionTitle from "./SectionTitle";
 import { goToContactWithPrefill } from "../helpers/goToContactWithPrefill";
-import { UNIDADES } from "../config/unidades";
+import { DEFAULT_HOME_CONTENT } from "../content/defaultHomeContent";
+import { formatPromotionDateLabel, getImageAlt, isPromotionVisible, resolveAssetUrl } from "../helpers/siteContent";
 
-const promos = [
-  {
-    id: "3x2",
-    title: "Promo 3x2",
-    desc: "Pagás 2 noches y te regalamos 1. Ideal para escapadas entre semana.",
-    dates: "Todo el año (según disponibilidad)",
-    notValid: "No válida para finde largo",
-    type: "nxm",
-    pay: 2,
-    get: 3,
-  },
-  {
-    id: "4x3",
-    title: "Promo 4x3",
-    desc: "Pagás 3 noches y te regalamos 1. Perfecta para descansar un poco más.",
-    dates: "Todo el año (según disponibilidad)",
-    notValid: "No válida para finde largo",
-    type: "nxm",
-    pay: 3,
-    get: 4,
-  },
-  {
-    id: "jubilados-10",
-    title: "10% OFF Jubilados",
-    desc: "Descuento exclusivo para jubilados. Se solicita acreditación al llegar.",
-    dates: "Todo el año (según disponibilidad)",
-    notValid: "No válida para finde largo",
-    type: "percent",
-    percent: 10,
-  },
-  {
-    id: "larga-5",
-    title: "Descuentos en estadías largas (+5 noches)",
-    desc: "Precio especial en reservas de 5 noches o más. Consultanos fechas y unidad.",
-    dates: "Todo el año (según disponibilidad)",
-    notValid: "No válida para finde largo",
-    type: "longStay",
-    minNights: 5,
-  },
-];
+export default function Promotions({
+  section = DEFAULT_HOME_CONTENT.promotionsSection,
+  promotions = DEFAULT_HOME_CONTENT.promotions,
+  accommodations = DEFAULT_HOME_CONTENT.accommodations,
+}) {
+  const visiblePromotions = (promotions || [])
+    .filter((item) => isPromotionVisible(item))
+    .slice()
+    .sort((left, right) => Number(left?.sortOrder ?? 0) - Number(right?.sortOrder ?? 0));
+  const unitFallback = accommodations?.[0] || null;
 
-export default function Promotions() {
-  const unitFallback = UNIDADES?.[0] || null;
+  const getTargetUnit = (unitId) => accommodations.find((item) => item.id === unitId) || unitFallback;
 
   return (
     <section className="relative py-14 md:py-16">
-      <SectionTitle
-        eyebrow="Promociones"
-        title="Promos y oportunidades"
-        desc="En este espacio te mostramos las promociones vigentes. Si no hay, podés consultarnos igual para que te asesoremos."
-      />
+      <SectionTitle eyebrow={section?.eyebrow} title={section?.title} desc={section?.description} />
 
-      <div className="mx-auto max-w-6xl px-4 mt-8">
-        {promos.length === 0 ? (
-          <div className="rounded-3xl border border-zinc-200/80 bg-white/70 backdrop-blur-sm shadow-sm ring-1 ring-black/[0.03] p-6 md:p-8">
-            <div className="flex flex-col md:flex-row md:items-center gap-6">
+      <div className="mx-auto mt-8 max-w-6xl px-4">
+        {visiblePromotions.length === 0 ? (
+          <div className="rounded-3xl border border-zinc-200/80 bg-white/70 p-6 shadow-sm ring-1 ring-black/[0.03] backdrop-blur-sm md:p-8">
+            <div className="flex flex-col gap-6 md:flex-row md:items-center">
               <div className="flex items-start gap-4">
-                <div className="h-12 w-12 rounded-2xl border border-zinc-200 bg-zinc-50 flex items-center justify-center shrink-0 leading-none">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-zinc-200 bg-zinc-50 leading-none">
                   <Sparkles className="h-6 w-6 text-zinc-700" />
                 </div>
 
                 <div>
-                  <p className="text-base font-semibold text-zinc-900">Por ahora no hay promociones publicadas</p>
-                  <p className="mt-1 text-sm text-zinc-600 leading-relaxed">
-                    Igual podés consultar disponibilidad y te pasamos la mejor opción según fechas.
-                  </p>
+                  <p className="text-base font-semibold text-zinc-900">{section?.emptyTitle}</p>
+                  <p className="mt-1 text-sm leading-relaxed text-zinc-600">{section?.emptyDescription}</p>
                 </div>
               </div>
 
-              <div className="md:ml-auto flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+              <div className="flex w-full flex-col gap-3 sm:flex-row md:ml-auto md:w-auto">
                 <button
                   type="button"
                   onClick={() => goToContactWithPrefill(unitFallback)}
-                  className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl text-sm font-semibold bg-emerald-700 text-white shadow-sm hover:bg-emerald-600 transition"
+                  className="inline-flex items-center justify-center gap-2 rounded-2xl bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-600"
                 >
                   Consultar disponibilidad
                   <ArrowRight className="h-4 w-4" />
@@ -85,47 +49,63 @@ export default function Promotions() {
             </div>
           </div>
         ) : (
-          // ✅ Lista de promos
-          <div className="grid md:grid-cols-2 gap-5">
-            {promos.map((p) => (
+          <div className="grid gap-5 md:grid-cols-2">
+            {visiblePromotions.map((promo) => (
               <div
-                key={p.id}
-                className="rounded-3xl border border-zinc-200/80 bg-white/70 backdrop-blur-sm shadow-sm ring-1 ring-black/[0.03] p-6"
+                key={promo.id}
+                className="overflow-hidden rounded-3xl border border-zinc-200/80 bg-white/70 shadow-sm ring-1 ring-black/[0.03] backdrop-blur-sm"
               >
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex items-start gap-3">
-                    <div className="h-11 w-11 rounded-2xl border border-zinc-200 bg-zinc-50 flex items-center justify-center shrink-0 leading-none">
-                      <BadgePercent className="h-5 w-5 text-zinc-700" />
-                    </div>
+                {promo.image?.url ? (
+                  <div className="aspect-[16/9] overflow-hidden border-b border-zinc-200/80 bg-zinc-100">
+                    <img
+                      src={resolveAssetUrl(promo.image)}
+                      alt={getImageAlt(promo.image, promo.title)}
+                      className="h-full w-full object-cover"
+                      loading="lazy"
+                    />
+                  </div>
+                ) : null}
 
-                    <div>
-                      <h3 className="font-semibold text-zinc-900">{p.title}</h3>
-                      <p className="text-sm text-zinc-600 mt-1 leading-relaxed">{p.desc}</p>
+                <div className="p-6">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex items-start gap-3">
+                      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-zinc-200 bg-zinc-50 leading-none">
+                        <BadgePercent className="h-5 w-5 text-zinc-700" />
+                      </div>
 
-                      {/* 👇 condición “no válida para finde largo” */}
-                      {p.notValid && (
-                        <p className="mt-2 text-xs text-zinc-500">
-                          <span className="font-semibold text-zinc-700">Importante:</span> {p.notValid}
-                        </p>
-                      )}
+                      <div>
+                        {promo.highlightText ? (
+                          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-emerald-800">
+                            {promo.highlightText}
+                          </p>
+                        ) : null}
+                        <h3 className="mt-1 font-semibold text-zinc-900">{promo.title}</h3>
+                        <p className="mt-1 text-sm leading-relaxed text-zinc-600">{promo.description}</p>
+
+                        {promo.disclaimer ? (
+                          <p className="mt-2 text-xs text-zinc-500">
+                            <span className="font-semibold text-zinc-700">Importante:</span> {promo.disclaimer}
+                          </p>
+                        ) : null}
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="mt-5 flex flex-wrap items-center gap-3">
-                  <div className="inline-flex items-center gap-2 text-sm text-zinc-600">
-                    <CalendarDays className="h-4 w-4" />
-                    {p.dates || "Fechas a confirmar"}
+                  <div className="mt-5 flex flex-wrap items-center gap-3">
+                    <div className="inline-flex items-center gap-2 text-sm text-zinc-600">
+                      <CalendarDays className="h-4 w-4" />
+                      {formatPromotionDateLabel(promo)}
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => goToContactWithPrefill({ ...getTargetUnit(promo.unitId), promo })}
+                      className="ml-auto inline-flex items-center justify-center gap-2 rounded-2xl bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-600"
+                    >
+                      {promo.ctaLabel || "Consultar promo"}
+                      <ArrowRight className="h-4 w-4" />
+                    </button>
                   </div>
-
-                  <button
-                    type="button"
-                    onClick={() => goToContactWithPrefill({ ...unitFallback, promo: p })}
-                    className="ml-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl bg-emerald-700 text-white text-sm font-semibold hover:bg-emerald-600 transition"
-                  >
-                    Consultar promo
-                    <ArrowRight className="h-4 w-4" />
-                  </button>
                 </div>
               </div>
             ))}

@@ -2,9 +2,15 @@ import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "rea
 import { Dialog, Transition } from "@headlessui/react";
 import useEmblaCarousel from "embla-carousel-react";
 import { ChevronLeft, ChevronRight, X, Loader2 } from "lucide-react";
+import { getImageAlt, resolveAssetUrl } from "../helpers/siteContent";
 
 function defaultBuildSrc(folder, file) {
-  return `/unidades/${folder}/${file}`;
+  if (!file) return "";
+  if (typeof file === "object") {
+    return resolveAssetUrl(file);
+  }
+  if (String(file).startsWith("http") || String(file).startsWith("/")) return resolveAssetUrl(file);
+  return resolveAssetUrl(`/unidades/${folder}/${file}`);
 }
 
 function clamp(n, min, max) {
@@ -256,9 +262,10 @@ export default function FullscreenViewer({
                         {images.map((img, idx) => {
                           const src = getSrc(img);
                           const loaded = isLoaded(idx);
+                          const imageAlt = getImageAlt(img, `${altBase} - ${idx + 1}`);
 
                           return (
-                            <div key={`${String(folder)}-${img}-fs`} className="min-w-0 flex-[0_0_100%]">
+                            <div key={`${String(folder)}-${src}-${idx}-fs`} className="min-w-0 flex-[0_0_100%]">
                               <div className="relative flex h-[75vh] sm:h-[80vh] items-center justify-center">
                                 {!loaded && (
                                   <div className="absolute inset-0 grid place-items-center">
@@ -271,7 +278,7 @@ export default function FullscreenViewer({
 
                                 <img
                                   src={src}
-                                  alt={`${altBase} - ${idx + 1}`}
+                                  alt={imageAlt}
                                   className={[
                                     "max-h-[75vh] sm:max-h-[80vh] max-w-[95vw] object-contain",
                                     "transition duration-200",

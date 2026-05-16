@@ -3,7 +3,7 @@ export const UNIDADES = [
     id: "apartamento",
     title: "Apartamento",
     subtitle: "Para 2-3 personas",
-    info: "Habitación de 25m² construida en una planta. Cuenta con sommier doble, baño privado, pequeña galería, cochera cubierta con media sombra y asador con parrilla.",
+    info: "Habitación de 25 m² construida en una planta. Cuenta con sommier doble, baño privado, pequeña galería, cochera cubierta con media sombra y asador con parrilla.",
     equipment: [
       { name: 'Smart TV 50"', icon: "Tv" },
       { name: "Vajilla", icon: "Coffee" },
@@ -42,7 +42,7 @@ export const UNIDADES = [
     id: "piedra",
     title: "Cabaña de piedra",
     subtitle: "Hasta 4 personas",
-    info: "Cabaña de 50m² construída en una planta. Cuenta con dos dormitorios (1° dormitorio sommier doble - 2° dormitorio dos sommiers simples), baño, cocina-comedor, galería-cochera y asador con parrilla individual.",
+    info: "Cabaña de 50 m² construida en una planta. Cuenta con dos dormitorios (1° dormitorio sommier doble - 2° dormitorio dos sommiers simples), baño, cocina-comedor, galería-cochera y asador con parrilla individual.",
     equipment: [
       { name: 'Smart TV 32"', icon: "Tv" },
       { name: "Vajilla completa", icon: "Coffee" },

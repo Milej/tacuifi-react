@@ -3,7 +3,7 @@ export default function SectionWrap({
   bg = "#ffffff",
   fadeTopFrom,
   fadeBottomTo,
-  fadeH = 56,
+  fadeH = 96,
   className = "",
   children,
 }) {

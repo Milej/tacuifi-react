@@ -1,34 +1,17 @@
-const MAIL_API_URL = "https://api.tacuifi.com.ar/api/contact/mail";
-
-async function parseError(res) {
-  try {
-    const data = await res.json();
-    return data?.message || data?.error || "No se pudo enviar el email.";
-  } catch {
-    return "No se pudo enviar el email.";
-  }
-}
+import { apiRequest } from "./api";
 
 export async function enviarConsultaMail({ message, subject, name, email, phone }) {
   try {
-    const res = await fetch(MAIL_API_URL, {
+    await apiRequest("/contact/mail", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
+      body: {
         message,
         subject,
         name,
         email,
         phone,
-      }),
+      },
     });
-
-    if (!res.ok) {
-      const msg = await parseError(res);
-      throw new Error(msg);
-    }
 
     return true;
   } catch (err) {

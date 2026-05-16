@@ -2,9 +2,18 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import { ChevronLeft, ChevronRight, Expand, Loader2 } from "lucide-react";
 import FullscreenViewer from "./FullscreenViewer";
+import { getImageAlt, resolveAssetUrl } from "../helpers/siteContent";
 
-function buildImgPath(folder, file) {
-  return `/unidades/${folder}/${file}`;
+function resolveImageValue(imageValue, folder) {
+  if (!imageValue) return "";
+  if (typeof imageValue === "string") {
+    if (String(imageValue).startsWith("http") || String(imageValue).startsWith("/")) {
+      return resolveAssetUrl(imageValue);
+    }
+    return resolveAssetUrl(`/unidades/${folder}/${imageValue}`);
+  }
+
+  return resolveAssetUrl(imageValue);
 }
 
 export default function UnitCarousel({
@@ -70,7 +79,7 @@ export default function UnitCarousel({
     });
   };
 
-  if (!folder || !images?.length) {
+  if (!images?.length) {
     return (
       <div
         className={[
@@ -105,8 +114,12 @@ export default function UnitCarousel({
         {/* Viewport */}
         <div ref={emblaRef} className="overflow-hidden">
           <div className="flex touch-pan-y">
-            {images.map((img, idx) => (
-              <div key={`${folder}-${img}`} className="relative min-w-0 flex-[0_0_100%]">
+            {images.map((img, idx) => {
+              const imageUrl = resolveImageValue(img, folder);
+              const imageAlt = getImageAlt(img, `${altBase} - ${idx + 1}`);
+
+              return (
+              <div key={`${folder || "unit"}-${imageUrl}-${idx}`} className="relative min-w-0 flex-[0_0_100%]">
                 <button
                   type="button"
                   onClick={() => {
@@ -119,18 +132,18 @@ export default function UnitCarousel({
                   aria-label="Ver en pantalla completa"
                 >
                   <div className="relative aspect-[16/10] bg-black/5">
-                    {!loadedSet.has(img) && <div className="absolute inset-0 z-10 animate-pulse bg-zinc-200/80" />}
+                    {!loadedSet.has(imageUrl) && <div className="absolute inset-0 z-10 animate-pulse bg-zinc-200/80" />}
                     <img
-                      src={shouldLoad ? buildImgPath(folder, img) : undefined}
-                      alt={`${altBase} - ${idx + 1}`}
+                      src={shouldLoad ? imageUrl : undefined}
+                      alt={imageAlt}
                       className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-300 ${
-                        loadedSet.has(img) ? "opacity-100" : "opacity-0"
+                        loadedSet.has(imageUrl) ? "opacity-100" : "opacity-0"
                       }`}
                       loading={idx === active ? "eager" : "lazy"}
                       decoding="async"
                       fetchPriority={idx === active ? "high" : "low"}
                       sizes="(max-width: 1024px) 100vw, 50vw"
-                      onLoad={() => markLoaded(img)}
+                      onLoad={() => markLoaded(imageUrl)}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/0 to-black/0" />
 
@@ -143,7 +156,8 @@ export default function UnitCarousel({
                   </div>
                 </button>
               </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 
